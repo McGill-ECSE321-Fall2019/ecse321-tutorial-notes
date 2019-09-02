@@ -1,0 +1,21 @@
+group: deprecated-2017Q4
+lang: ruby
+rvm:
+- 2.3.6
+bundler_args: "--system"
+env:
+  global:
+  - GH_REF: github.com/McGill-ECSE321-Winter2019/EventRegistration-Tutorials
+branches:
+  only:
+  - master
+script:
+- "./convert.sh"
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  on:
+    branch: master
+

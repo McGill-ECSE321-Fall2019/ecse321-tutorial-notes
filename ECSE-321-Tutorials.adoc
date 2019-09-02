@@ -1,0 +1,28 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:rootdir: .
+ifndef::source-highlighter[:source-highlighter: highlightjs]
+ifndef::highlightjsdir[:highlightjsdir: {rootdir}/highlight.js]
+ifndef::highlightjs-theme[:highlightjs-theme: foundation]
+:imagesdir: {rootdir}
+:toclevels: 3
+:toc:
+:toc2:
+:chapterdir: .
+:numbered:
+
+= ECSE 321 Introduction to Software Engineering: Hands-on Tutorials
+McGill University
+
+* link:https://ecse321-fall2018.github.io/EventRegistration-Tutorials/[HTML version]
+* link:https://ecse321-fall2018.github.io/EventRegistration-Tutorials/ECSE-321-Tutorials.pdf[PDF version]
+
+Sections of the tutorial will continuously be published at this web page.
+
+== Preliminaries
+
+<<<
+include::{chapterdir}/01-1-P-Github-Classroom.adoc[]
+
+<<<
+include::{chapterdir}/01-2-P-Agile-Tools.adoc[]
+
