@@ -75,6 +75,9 @@ Example:
 
 image:figs/terminal-find-sed-mv.png[]
 
+[NOTE]
+The file _helloworld.txt_ in the example is initially a copy of _greeting.txt_.
+
 ==== Some additional useful commands
  * `rm`: removes a file
  * `cp -r`: copies a directory recursively with its contents
