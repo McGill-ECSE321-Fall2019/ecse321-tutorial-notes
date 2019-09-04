@@ -29,21 +29,4 @@ image:figs/github-milestone.png[Create a new milestone]
 
 . See how GitHub track the project progress as you move the cards from the different columns.
 
-==== ZenHub
 
-ZenHub is an addition to GitHub that is designed to provide features helpful for agile development processes. It basically extends and replaces classic GitHub Projects. 
-
-. Log in with your GitHub account on https://www.zenhub.com/
-
-. Open the repository at https://github.com/McGill-ECSE321-Winter2019/ZenHub-Example
-
-. Create a new epic about "Desinging REST API for backend <McGill ID>" and add your McGill ID to make the epic's name unique
-
-. See how your epic is automatically created as an issue and added to the GitHub issue tracker! What else does ZenHub take care of?
-
-. Optional: add the Firefox/Chrome ZenHub extension to your browser to allow full integration of ZenHub to the GitHub web UI
-
-Other resources for ZenHub:
-
- * Getting started: https://www.zenhub.com/blog/getting-started-with-zenhub/
- * Video tutorial: https://www.youtube.com/watch?v=TRu7vKCg920
