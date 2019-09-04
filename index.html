@@ -441,7 +441,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_project_management_tools_for_agile_development">1.2. Project Management Tools for Agile Development</a>
 <ul class="sectlevel3">
 <li><a href="#_github_projects">1.2.1. GitHub Projects</a></li>
-<li><a href="#_zenhub">1.2.2. ZenHub</a></li>
+</ul>
+</li>
+<li><a href="#_command_line_basics">1.3. Command Line Basics</a>
+<ul class="sectlevel3">
+<li><a href="#_windows_prerequisites">1.3.1. Windows prerequisites</a></li>
+<li><a href="#_basic_file_system_operaions">1.3.2. Basic file system operaions</a></li>
+<li><a href="#_finding_files">1.3.3. Finding files</a></li>
+<li><a href="#_batch_file_operations">1.3.4. Batch file operations</a></li>
+<li><a href="#_some_additional_useful_commands">1.3.5. Some additional useful commands</a></li>
 </ul>
 </li>
 </ul>
@@ -483,7 +491,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Log in/Register on GitHub.</p>
 </li>
 <li>
-<p>Open link <a href="https://classroom.github.com/g/HbhgnXXn" class="bare">https://classroom.github.com/g/HbhgnXXn</a></p>
+<p>Open link <a href="https://classroom.github.com/g/o9gWNZis" class="bare">https://classroom.github.com/g/o9gWNZis</a></p>
 </li>
 <li>
 <p>Select your McGill ID from the list</p>
@@ -492,7 +500,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </li>
 <li>
-<p>Join team <em>AllStudents</em></p>
+<p>Join team <em>All students</em></p>
 <div class="paragraph">
 <p><span class="image"><img src="./figs/join-org.png" alt="Join team"></span></p>
 </div>
@@ -550,42 +558,180 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ol>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_command_line_basics">1.3. Command Line Basics</h3>
+<div class="paragraph">
+<p>This section shows a few handy terminal commands.</p>
 </div>
 <div class="sect3">
-<h4 id="_zenhub">1.2.2. ZenHub</h4>
+<h4 id="_windows_prerequisites">1.3.1. Windows prerequisites</h4>
 <div class="paragraph">
-<p>ZenHub is an addition to GitHub that is designed to provide features helpful for agile development processes. It basically extends and replaces classic GitHub Projects.</p>
+<p>This step can be skipped if you are using MacOS or Linux. However, if you are using Windows, you need to have a terminal that supports the execution of basic Linux commands. Such programs are Git Bash or MinGW, for example. You can find below a few helper steps to get MinGW running on your system.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Log in with your GitHub account on <a href="https://www.zenhub.com/" class="bare">https://www.zenhub.com/</a></p>
+<p>Get the <a href="https://osdn.net/projects/mingw/downloads/68260/mingw-get-setup.exe/">MinGW installer from here</a></p>
 </li>
 <li>
-<p>Open the repository at <a href="https://github.com/McGill-ECSE321-Winter2019/ZenHub-Example" class="bare">https://github.com/McGill-ECSE321-Winter2019/ZenHub-Example</a></p>
+<p>Install it to wherever you like, the default installation folder is <em>C:\MinGW</em></p>
 </li>
 <li>
-<p>Create a new epic about "Desinging REST API for backend &lt;McGill ID&gt;" and add your McGill ID to make the epic&#8217;s name unique</p>
+<p>Once the setup finishes, open the MinGW Installation Manager</p>
 </li>
 <li>
-<p>See how your epic is automatically created as an issue and added to the GitHub issue tracker! What else does ZenHub take care of?</p>
+<p>Select the two packages for installation as shown in the figure below<br>
+<span class="image"><img src="./figs/mingw-base-install.png" alt="MinGW Base Packages"></span></p>
 </li>
 <li>
-<p>Optional: add the Firefox/Chrome ZenHub extension to your browser to allow full integration of ZenHub to the GitHub web UI</p>
+<p>You can open a terminal window by running the executable <em>C:\MinGW\msys\1.0\bin\bash.exe</em></p>
 </li>
 </ol>
 </div>
-<div class="paragraph">
-<p>Other resources for ZenHub:</p>
 </div>
+<div class="sect3">
+<h4 id="_basic_file_system_operaions">1.3.2. Basic file system operaions</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open a terminal, and try the following commands:<br></p>
 <div class="ulist">
 <ul>
 <li>
-<p>Getting started: <a href="https://www.zenhub.com/blog/getting-started-with-zenhub/" class="bare">https://www.zenhub.com/blog/getting-started-with-zenhub/</a></p>
+<p><code>pwd</code>: prints the present working directory<br>
+Example:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ pwd
+/home/ecse321</code></pre>
+</div>
+</div>
 </li>
 <li>
-<p>Video tutorial: <a href="https://www.youtube.com/watch?v=TRu7vKCg920" class="bare">https://www.youtube.com/watch?v=TRu7vKCg920</a></p>
+<p><code>ls</code>: lists the content of a given folder<br>
+Example:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ ls /home
+ecse321 guest-user admin</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>cd</code>: navigates the file system<br>
+Example:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd ..
+$ pwd
+/home
+$ cd ecse321
+$ pwd
+/home/ecse321</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The following steps will include images that illustrate the commands and their output to prevent easy copy-paste. Sorry! :)
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Creating files and reading/writing their contents</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>touch</code>: creates a file</p>
+</li>
+<li>
+<p><code>mkdir</code>: creates a directory</p>
+</li>
+<li>
+<p><code>mv</code>: moves a file (or directory) from its current location to a target location</p>
+</li>
+<li>
+<p><code>echo</code>: prints a string</p>
+</li>
+<li>
+<p><code>cat</code>: prints the contents of a file<br>
+Example:</p>
+<div class="paragraph">
+<p><span class="image"><img src="./figs/terminal-touch-ls-echo-cat-mkdir-mv.png" alt="terminal touch ls echo cat mkdir mv"></span></p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_finding_files">1.3.3. Finding files</h4>
+<div class="paragraph">
+<p>The versatile <code>find</code> command allows us to find files based on given criteria. Take look at its manual page with <code>man find</code>!</p>
+</div>
+<div class="paragraph">
+<p>Example:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./figs/terminal-find.png" alt="terminal find"></span></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_batch_file_operations">1.3.4. Batch file operations</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sed</code>: stream editor; changes a given string to a replacement</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Combining <code>find</code> with an additional command (e.g., <code>sed</code>) can greatly speed up your repetitive tasks.<br>
+Example:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./figs/terminal-find-sed-mv.png" alt="terminal find sed mv"></span></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_some_additional_useful_commands">1.3.5. Some additional useful commands</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>rm</code>: removes a file</p>
+</li>
+<li>
+<p><code>cp -r</code>: copies a directory recursively with its contents</p>
+</li>
+<li>
+<p><code>rmdir</code>: remove an empty directory</p>
+</li>
+<li>
+<p><code>rm -rf</code>: force to recursively delete a directory (or file) and all its contents</p>
+</li>
+<li>
+<p><code>nano</code>: an easy-to-use text editor (not available by default in MinGW)</p>
+</li>
+<li>
+<p><code>grep</code>: finds matches for a string in a given stream of characters</p>
+</li>
+<li>
+<p><code>ag</code>: takes a string as argument and searches through the contents of files recursively to find matches of the given string (this tool is included in the <em>silversearcher-ag</em> package)</p>
 </li>
 </ul>
 </div>
@@ -596,7 +742,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-02 09:58:33 UTC
+Last updated 2019-09-04 08:54:04 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">

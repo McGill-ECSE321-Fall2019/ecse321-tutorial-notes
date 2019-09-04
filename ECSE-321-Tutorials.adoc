@@ -27,3 +27,6 @@ include::{chapterdir}/01-1-P-Github-Classroom.adoc[]
 <<<
 include::{chapterdir}/01-2-P-Agile-Tools.adoc[]
 
+<<<
+include::{chapterdir}/01-3-P-Terminal-Basics.adoc[]
+
