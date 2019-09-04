@@ -15,6 +15,8 @@ This step can be skipped if you are using MacOS or Linux. However, if you are us
 . Select the two packages for installation as shown in the figure below +
 image:figs/mingw-base-install.png[MinGW Base Packages]
 
+. Click on _Installation/Apply Changes_. This will take a few moments to fetch and install the required packages.
+
 . You can open a terminal window by running the executable _C:\MinGW\msys\1.0\bin\bash.exe_
 
 ==== Basic file system operaions
