@@ -29,3 +29,7 @@ include::{chapterdir}/01-2-P-Agile-Tools.adoc[]
 <<<
 include::{chapterdir}/01-3-P-Terminal-Basics.adoc[]
 
+include::{chapterdir}/02-1-P-Git-Basics.adoc[]
+
+<<<
+include::{chapterdir}/02-2-P-Travis.adoc[]
