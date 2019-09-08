@@ -452,6 +452,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_some_additional_useful_commands">1.3.5. Some additional useful commands</a></li>
 </ul>
 </li>
+<li><a href="#_git_and_github">1.4. Git and GitHub</a>
+<ul class="sectlevel3">
+<li><a href="#_installing_git">1.4.1. Installing Git</a></li>
+<li><a href="#_creating_a_remote_git_repository_on_github">1.4.2. Creating a remote git repository on GitHub</a></li>
+<li><a href="#_cloning_to_a_local_repository">1.4.3. Cloning to a local repository</a></li>
+<li><a href="#_git_basics">1.4.4. Git basics</a></li>
+<li><a href="#_browsing_commit_history_on_github">1.4.5. Browsing commit history on GitHub</a></li>
+</ul>
+</li>
+<li><a href="#_travis_ci">1.5. Travis CI</a></li>
 </ul>
 </li>
 </ul>
@@ -751,12 +761,227 @@ The file <em>helloworld.txt</em> in the example is initially a copy of <em>greet
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_git_and_github">1.4. Git and GitHub</h3>
+<div class="sect3">
+<h4 id="_installing_git">1.4.1. Installing Git</h4>
+<div class="paragraph">
+<p>Install the Git version control system (VCS) from <a href="https://git-scm.com/downloads" class="bare">https://git-scm.com/downloads</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_remote_git_repository_on_github">1.4.2. Creating a remote git repository on GitHub</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to <a href="https://github.com/new" class="bare">https://github.com/new</a></p>
+</li>
+<li>
+<p>Set <em>test</em> as the name of the repository</p>
+</li>
+<li>
+<p>Check the checkbox <em>Initialize this repository with a README</em></p>
+</li>
+<li>
+<p>Click on create repository</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cloning_to_a_local_repository">1.4.3. Cloning to a local repository</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open up a terminal (Git bash on Windows).</p>
+</li>
+<li>
+<p>Navigate to the designated target directory (it is typical to use the <code>git</code> folder within the home directory for storing Git repositories, e.g., <code>cd /home/username/git</code>).</p>
+</li>
+<li>
+<p>Using a Git client, clone this newly created <em>test</em> repository to your computer. First, get the repository URL (use HTTPS for now).<br>
+<span class="image"><img src="./figs/git-repourl.png" alt="Repository URL"></span><br>
+Then, issue <code>git clone https://url/of/the/repository.git</code><br>
+You should get an output similar to this:<br>
+<span class="image"><img src="./figs/git-clone-result.png" alt="Cloning a repository"></span></p>
+</li>
+<li>
+<p>Verify the contents of the <em>working copy</em> of the repository by <code>ls -la ./test</code>. The <em>.git</em> folder holds version information and history for the repository, while the <em>README.md</em> is an auto-generated text file by GitHub.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_git_basics">1.4.4. Git basics</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open up a terminal and configure username and email address. These are needed to identify the author of the different changes.<br>
+<span class="image"><img src="./figs/gitconfig-username.png" alt="Configuring username"></span>
+<span class="image"><img src="./figs/gitconfig-email.png" alt="Configuring email"></span><br>
+Glossary&#8201;&#8212;&#8201;Part 1:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Git</strong> is your version control software</p>
+</li>
+<li>
+<p><strong>GitHub</strong> hosts your repositories</p>
+</li>
+<li>
+<p>A <strong>repository</strong> is a collection of files and their history</p>
+</li>
+<li>
+<p>A <strong>commit</strong> is a saved state of the repository</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Enter the working directory, then check the history by issuing <code>git log</code>. Example output:<br>
+<span class="image"><img src="./figs/git-log-result.png" alt="Example output for git log"></span></p>
+</li>
+<li>
+<p>Adding and commiting a file: use the <code>git add</code> and <code>git commit</code> commands.<br>
+<span class="image"><img src="./figs/git-commit1.png" alt="git commit1"></span>
+<span class="image"><img src="./figs/git-commit2.png" alt="git commit2"></span>
+<span class="image"><img src="./figs/git-commit3.png" alt="git commit3"></span><br>
+The effect of these commands are explained on the figure below:<br>
+<span class="image"><img src="./figs/git-commit-explained.png" alt="git commit explained"></span><br>
+Glossary&#8201;&#8212;&#8201;Part 2:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Working Directory</strong>: files being worked on right now</p>
+</li>
+<li>
+<p><strong>Staging area</strong>: files ready to be committed</p>
+</li>
+<li>
+<p><strong>Repository</strong>: A collection of commits</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Checking current status is done with <code>git status</code>.<br>
+<span class="image"><img src="./figs/git-status.png" alt="git status"></span></p>
+</li>
+<li>
+<p>Staging and unstaging files: use <code>git add</code> to add and <code>git reset</code> to remove files from the staging area.<br>
+<span class="image"><img src="./figs/git-add.png" alt="git add"></span>
+<span class="image"><img src="./figs/git-status-add.png" alt="git status add"></span>
+<span class="image"><img src="./figs/git-reset.png" alt="git reset"></span><br></p>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Only staged files will be included in the next commit.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>To display detailed changes in unstaged files use <code>git diff</code>, while use <code>git diff --staged</code> to show changes within files staged for commit.<br>
+<span class="image"><img src="./figs/git-diff.png" alt="git diff"></span></p>
+</li>
+<li>
+<p>Reverting to a previous version is done using <code>git checkout</code>.<br>
+<span class="image"><img src="./figs/git-checkout.png" alt="git checkout"></span></p>
+</li>
+<li>
+<p>The commands <code>git pull</code> (or the <code>git fetch</code> + <code>git rebase</code> combination) and <code>git push</code> are used to synchronize local and remote repositories.<br>
+<span class="image"><img src="./figs/git-remote.png" alt="git remote"></span></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_browsing_commit_history_on_github">1.4.5. Browsing commit history on GitHub</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>You can browse pushed commits in the remote repository online using GitHub. You can select the <em>commits</em> menu for a repository.<br>
+<span class="image"><img src="./figs/commits-menu.png" alt="commits menu" width="600"></span><br>
+To get a link for a specific commit, click on the button with the first few characters of the hash of the commit.<br>
+<span class="image"><img src="./figs/commits-select.png" alt="commits select" width="600"></span></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The source for most of the images in the Git documentation: <a href="https://github.com/shabbir-hussain/ecse321tutorials/blob/master/01-githubTutorial1.pptx" class="bare">https://github.com/shabbir-hussain/ecse321tutorials/blob/master/01-githubTutorial1.pptx</a></p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_travis_ci">1.5. Travis CI</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Go to <a href="https://travis-ci.com/" class="bare">https://travis-ci.com/</a>, click on Sign up with GitHub.</p>
+</li>
+<li>
+<p>Click on the green authorize button at the bottom of the page.</p>
+</li>
+<li>
+<p>Activate Travis-CI on your GitHub account<br>
+<span class="image"><img src="./figs/travis-activate.png" alt="Activate Travis-CI" width="600"></span></p>
+</li>
+<li>
+<p>Select the repositories you want to build with Travis (make sure to include your repository that you created for this tutorial). You can modify this setting anytime later as well.</p>
+</li>
+<li>
+<p>In your working copy of your repository, create a default Gradle java project.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Make sure you have <a href="https://gradle.org/install/">Gradle</a> installed (<code>gradle --version</code>).</p>
+</li>
+<li>
+<p>Issue <code>gradle init --type java-library</code></p>
+</li>
+<li>
+<p>Add a <code>.gitignore</code> to ignore generated resources by Git:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>.gradle/
+build/</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make sure your application is compiling by running <code>gradle build</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Create a file called <code>.travis.yml</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>language: java
+script:
+- gradle build</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Commit and push your work. If everything is set up correctly, the build should trigger and Travis should run your build using Gradle.</p>
+</li>
+</ol>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-04 12:11:25 UTC
+Last updated 2019-09-08 09:11:37 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">
