@@ -462,6 +462,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_travis_ci">1.5. Travis CI</a></li>
+<li><a href="#_gradle_a_build_framework">1.6. Gradle: A Build Framework</a>
+<ul class="sectlevel3">
+<li><a href="#_example_gradle_application">1.6.1. Example Gradle application</a></li>
+<li><a href="#_setting_up_a_spring_spring_boot_backend_app_with_gradle">1.6.2. Setting up a Spring/Spring Boot backend app with Gradle</a></li>
+</ul>
+</li>
+<li><a href="#_heroku">1.7. Heroku</a>
+<ul class="sectlevel3">
+<li><a href="#_preparations">1.7.1. Preparations</a></li>
+<li><a href="#_creating_a_heroku_app">1.7.2. Creating a Heroku app</a></li>
+<li><a href="#_adding_a_database_to_the_application">1.7.3. Adding a database to the application</a></li>
+<li><a href="#_extending_the_build_for_the_heroku_deployment_environment">1.7.4. Extending the build for the Heroku deployment environment</a></li>
+<li><a href="#_supply_application_specific_setting_for_heroku">1.7.5. Supply application-specific setting for Heroku</a></li>
+<li><a href="#_deploying_the_app">1.7.6. Deploying the app</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -975,13 +991,576 @@ script:
 </li>
 </ol>
 </div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_gradle_a_build_framework">1.6. Gradle: A Build Framework</h3>
+<div class="sect3">
+<h4 id="_example_gradle_application">1.6.1. Example Gradle application</h4>
+<div class="paragraph">
+<p>This section focuses on writing a Gradle (<a href="https://gradle.org/" class="bare">https://gradle.org/</a>) build script that builds a single Gradle project referred to as <em>Computation</em>. The source code and tests for a Java application is available here: <a href="resources/Computation.zip">Computation.zip</a> (src and tst folders). It is your job to create a folder called <em>Computation</em>, move sources and tests into that folder, and produce the Gradle build script <em>build.gradle</em> within this folder to automate the software build process for this project.</p>
+</div>
+<div class="paragraph">
+<p>First, open a terminal, and ensure you have the newes version  of Gradle (ver. 5.0+) installed with <code>gradle --version</code>.</p>
+</div>
+<div class="paragraph">
+<p>Follow the steps below and add the snippets listed here to <code>build.gradle</code>, one after the other:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create the following folder structure and a new <em>build.gradle</em> (empty) file within the <em>Computation</em> folder:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Computation
+├── build.gradle
+└── src
+    ├── main
+    │   └── java
+    │       ├── application
+    │       │   └── CompApp.java
+    │       ├── computation
+    │       │   └── Computation.java
+    │       └── view
+    │           └── ComputationPage.java
+    └── test
+        └── java
+            └── computation
+                ├── AllTests.java
+                ├── ComputationTestAddSubstract.java
+                └── ComputationTestDivideMultiply.java</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the <code>java</code> and the <code>application</code> plugins to the build configuration script <em>build.gradle</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">apply plugin: 'java'
+// This plugin has a predefined 'run' task that we can reuse to use Gradle to execute our application
+apply plugin: 'application'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add JUnit libraries to the <code>dependencies</code> section.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">repositories {
+    mavenCentral()
+}
+dependencies {
+    testImplementation "junit:junit:4.12"
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add and describe a new task <code>compile(type: JavaCompile)</code> to specify all source files (both application and test) and set the <em>build/bin</em> as destination dir to put all compiled class files in.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">task compile(type: JavaCompile) {
+  classpath = sourceSets.main.compileClasspath
+  classpath += sourceSets.test.runtimeClasspath
+  sourceSets.test.java.outputDir = file('build/bin')
+  sourceSets.main.java.outputDir = file('build/bin')
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+One can specify source sets and their variables the following way:
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">/*
+ * specifying sourceSets is not necessary in this case, since
+ * we are applying the default folder structure assumed by Gradle
+ */
+sourceSets {
+  main {
+    java { srcDir 'src/main/java' }
+  }
+  test {
+    java { srcDir 'src/test/java'}
+  }
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Specify the main class and run the application.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">mainClassName='application.CompApp'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the command line issue <code>gradle run</code></p>
+</div>
+</li>
+<li>
+<p>Describe the <code>jar</code> Gradle task (defined by the <code>java</code> plugin) to produce an executable jar file into <code>distributable/</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">jar {
+  destinationDir=file('distributable')
+  manifest {
+    // It is smart to reuse the name of the main class variable instead of hardcoding it
+    attributes "Main-Class": "$mainClassName"
+  }
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The <code>settings.gradle</code> and its usage is to be shown later.
+</td>
+</tr>
+</table>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect3">
+<h4 id="_setting_up_a_spring_spring_boot_backend_app_with_gradle">1.6.2. Setting up a Spring/Spring Boot backend app with Gradle</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install the <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html#getting-started-installing-the-cli">Spring Boot CLI</a></p>
+</li>
+<li>
+<p>Create a new repository under your account on GitHub for an example application that we are going to develop throughout the semester. Name the repository <strong>eventregistration</strong>. See more on the specification of the application functionality later.<br>
+<span class="image"><img src="./figs/eventregistration-repo.png" alt="Create new eventregistration repo" width="600"></span></p>
+</li>
+<li>
+<p>Clone it somewhere on your disk. We assume you cloned it to <em>~/git/eventregistration</em>.</p>
+</li>
+<li>
+<p>Navigate to that folder in the terminal: <code>cd ~/git/eventregistration_</code>.</p>
+</li>
+<li>
+<p>Create a project for the backend application using Spring Boot CLI in this repository.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">spring init \
+ --build=gradle \
+ --java-version=1.8 \
+ --package=ca.mcgill.ecse321.eventregistration \
+ --name=EventRegistration \
+ --dependencies=web,data-jpa,postgresql \
+ EventRegistration-Backend</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Backslashes in this snippet indicate linebreaks in this one liner command typed in the terminal. You can select and copy-paste this snippet as-is.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>For future use, locate the <em>application.properties</em> file in the <em>src/</em> folder and add the following content:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>server.port=${PORT:8080}
+
+spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults = false
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Source: <a href="https://vkuzel.com/spring-boot-jpa-hibernate-atomikos-postgresql-exception" class="bare">https://vkuzel.com/spring-boot-jpa-hibernate-atomikos-postgresql-exception</a>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Locate the Java file containing the main application class (<code>EventRegistrationApplication.java</code>) and add the following content</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration;
+
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.SpringApplication;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@RestController
+@SpringBootApplication
+public class EventRegistrationApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(EventRegistrationApplication.class, args);
+	}
+
+  @RequestMapping("/")
+  public String greeting(){
+    return "Hello world!";
+  }
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that it builds with <code>gradle build -xtest</code>.<br></p>
+</li>
+<li>
+<p>Commit and push the files of the new Spring project.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add .
+git status #verify the files that are staged for commit
+git commit -m "Initial commit of the backend application"
+git push</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_heroku">1.7. Heroku</h3>
+<div class="sect3">
+<h4 id="_preparations">1.7.1. Preparations</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Sign up/log in on Heroku by visiting <a href="https://www.heroku.com/" class="bare">https://www.heroku.com/</a>.</p>
+</li>
+<li>
+<p>Install the command line client for Heroku: <a href="https://devcenter.heroku.com/articles/heroku-cli">Heroku CLI</a></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The Travis client might also be useful at later stages of the course, you can install it from here: <a href="https://github.com/travis-ci/travis.rb#readme">Travis CLI</a>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Log in to Heroku CLI by opening a terminal an typing: <code>heroku login</code>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_heroku_app">1.7.2. Creating a Heroku app</h4>
+<div class="paragraph">
+<p>We are creating a Heroku application and deploying the <em>Hello world!</em> Spring example. Additionally, the steps below will make it possible to store multiple different applications in the same git repository and deploy them individually to Heroku. Steps will be shown through the example EventRegistration application, and should be adapted in the course project.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+All actions described here for configuring Heroku applications using the Heroku CLI could also be done via the web UI.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Once you are logged in with the Heroku-CLI, create a new Heroku application: in the root of the git repository of your repository (assumed to be <em>~/git/eventregistration</em>), issue <code>heroku create eventregistration-backend-&lt;UNIQUE_ID&gt; -n</code> to create an application named "eventregistration-backend-&lt;UNIQUE_ID&gt;".<br></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+In Heroku, the application name should be unique Heroku-wise, that is, each application in Heroku&#8217;s system should have a unique name. If you don&#8217;t provide a name parameter for the command, Heroku will randomly generate one.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Add the <a href="https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-multi-procfile">multi procfile</a> and <a href="https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-gradle">Gradle</a> buildpacks to the app.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku buildpacks:add -a eventregistration-backend-&lt;UNIQUE_ID&gt; https://github.com/heroku/heroku-buildpack-multi-procfile
+heroku buildpacks:add -a eventregistration-backend-&lt;UNIQUE_ID&gt; heroku/gradle</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Order is important.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_adding_a_database_to_the_application">1.7.3. Adding a database to the application</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open the Heroku applications web page and go to <em>Resources</em>, then add the Heroku Postgres add-on.<br>
+<span class="image"><img src="./figs/heroku-postgres.png" alt="Heroku Postgres add-on" width="600"></span><br></p>
+</li>
+<li>
+<p>Click the entry for Postgres within the list of add-ons, then go to <em>Settings</em>. You can see the database credentials there.
+<span class="image"><img src="./figs/heroku-postgres-credentials.png" alt="Heroku Postgres add-on" width="600"></span><br></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The credentials are periodically updated and changed by Heroku, so make sure that you are using the actual credentials when manually connecting to the database. (E.g., during manual testing.)
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_extending_the_build_for_the_heroku_deployment_environment">1.7.4. Extending the build for the Heroku deployment environment</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Before deploying, a top level <em>build.gradle</em> and <em>settings.gradle</em> need to be created in the root of the repository (i.e., in <em>~/git/eventregistration</em>)<br>
+<em>build.gradle</em>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">task stage () {
+    dependsOn ':EventRegistration-Backend:assemble'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>settings.gradle</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">include ':EventRegistration-Backend'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Generate the Gradle wrapper with the newest Gradle version</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">gradle wrapper --gradle-version 5.1.1</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a <em>.gitignore</em> file for the <em>.gradle</em> folder:<br>
+<em>.gitignore</em>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>.gradle/</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add all new files to git</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add .
+git status #make sure that files in .gradle/ are not added</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output for <code>git status</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">On branch master
+Your branch is ahead of 'origin/master' by 2 commits.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+	new file:   .gitignore
+	new file:   gradle/wrapper/gradle-wrapper.jar
+	new file:   gradle/wrapper/gradle-wrapper.properties
+	new file:   gradlew
+	new file:   gradlew.bat</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Commit changes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git commit -m "Adding Gradle wrapper"</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_supply_application_specific_setting_for_heroku">1.7.5. Supply application-specific setting for Heroku</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Within the <em>EventRegistration-Backend</em> folder, create a file called <em>Procfile</em> (<strong>not</strong> Procfile.txt, name it <strong>exactly</strong> Procfile) with the content:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>web: java -jar EventRegistration-Backend/build/libs/EventRegistration-Backend-0.0.1-SNAPSHOT.jar</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add the Procfile to a new commit</p>
+</li>
+<li>
+<p>Configure the multi-procfile buildpack to find the Procfile:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku config:add PROCFILE=EventRegistration-Backend/Procfile --app eventregistration-backend-&lt;UNIQUE_ID&gt;</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_deploying_the_app">1.7.6. Deploying the app</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Obtain and copy the <em>Heroku Git URL</em></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku git:remote --app eventregistration-backend-&lt;UNIQUE_ID&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">set git remote heroku to https://git.heroku.com/eventregistration-backend-&lt;UNIQUE_ID&gt;.git</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add the <code>backend-heroku</code> remote and deploy the first version of the application with</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git remote add backend-heroku https://git.heroku.com/eventregistration-backend-&lt;UNIQUE_ID&gt;.git
+git push backend-heroku master</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If it fails to build, make sure you try understanding the output. Typical issue: buildpacks are not added/are not in the right order.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Visit the link provided in the build output. It may take some time (even 30-60 seconds) for the server to answer the first HTTP request, so be patient!</p>
+</li>
+<li>
+<p>Save your work to the GitHub repository, too: <code>git push origin master</code><br>
+Final layout of the files (only two directory levels are shown):<br></p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>~/git/eventregistration
+├── build.gradle
+├── EventRegistration-Backend
+│   ├── build
+│   │   ├── classes
+│   │   ├── libs
+│   │   ├── resources
+│   │   └── tmp
+│   ├── build.gradle
+│   ├── gradle
+│   │   └── wrapper
+│   ├── gradlew
+│   ├── gradlew.bat
+│   ├── Procfile
+│   ├── settings.gradle
+│   └── src
+│       ├── main
+│       └── test
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradlew
+├── gradlew.bat
+├── README.md
+└── settings.gradle</pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-13 14:36:16 UTC
+Last updated 2019-09-13 14:39:53 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">
