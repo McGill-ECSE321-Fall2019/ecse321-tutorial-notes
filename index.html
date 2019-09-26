@@ -1156,7 +1156,7 @@ The <code>settings.gradle</code> and its usage is to be shown later.
 <p>Clone it somewhere on your disk. We assume you cloned it to <em>~/git/eventregistration</em>.</p>
 </li>
 <li>
-<p>Navigate to that folder in the terminal: <code>cd ~/git/eventregistration_</code>.</p>
+<p>Navigate to that folder in the terminal: <code>cd ~/git/eventregistration</code>.</p>
 </li>
 <li>
 <p>Create a project for the backend application using Spring Boot CLI in this repository.</p>
@@ -1183,6 +1183,9 @@ Backslashes in this snippet indicate linebreaks in this one liner command typed 
 </tr>
 </table>
 </div>
+</li>
+<li>
+<p>Navigate to the <em>EventRegistration-Backend</em> folder</p>
 </li>
 <li>
 <p>For future use, locate the <em>application.properties</em> file in the <em>src/</em> folder and add the following content:</p>
@@ -1222,14 +1225,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @SpringBootApplication
 public class EventRegistrationApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(EventRegistrationApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(EventRegistrationApplication.class, args);
+  }
 
   @RequestMapping("/")
   public String greeting(){
     return "Hello world!";
   }
+
 }</code></pre>
 </div>
 </div>
@@ -1395,7 +1399,7 @@ The credentials are periodically updated and changed by Heroku, so make sure tha
 <p>Generate the Gradle wrapper with the newest Gradle version</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">gradle wrapper --gradle-version 5.1.1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">gradle wrapper --gradle-version 5.6.2</code></pre>
 </div>
 </div>
 </li>
@@ -1429,10 +1433,12 @@ Changes to be committed:
   (use "git reset HEAD &lt;file&gt;..." to unstage)
 
 	new file:   .gitignore
+	new file:   build.gradle
 	new file:   gradle/wrapper/gradle-wrapper.jar
 	new file:   gradle/wrapper/gradle-wrapper.properties
 	new file:   gradlew
-	new file:   gradlew.bat</code></pre>
+	new file:   gradlew.bat
+	new file:   settings.gradle</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1481,7 +1487,7 @@ Changes to be committed:
 <p>Obtain and copy the <em>Heroku Git URL</em></p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku git:remote --app eventregistration-backend-&lt;UNIQUE_ID&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku git:remote --app eventregistration-backend-&lt;UNIQUE_ID&gt; --remote backend-heroku</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1489,16 +1495,26 @@ Changes to be committed:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">set git remote heroku to https://git.heroku.com/eventregistration-backend-&lt;UNIQUE_ID&gt;.git</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">set git remote backend-heroku to https://git.heroku.com/eventregistration-backend-&lt;UNIQUE_ID&gt;.git</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Add the <code>backend-heroku</code> remote and deploy the first version of the application with</p>
+<p>Verify that the <code>backend-heroku</code> remote is successfully added besides <code>origin</code> with <code>git remote -v</code>. Output:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git remote add backend-heroku https://git.heroku.com/eventregistration-backend-&lt;UNIQUE_ID&gt;.git
-git push backend-heroku master</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">backend-heroku	https://git.heroku.com/eventregistration-backend-123.git (fetch)
+backend-heroku	https://git.heroku.com/eventregistration-backend-123.git (push)
+origin	git@github.com:imbur/eventregistration.git (fetch)
+origin	git@github.com:imbur/eventregistration.git (push)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Deploy your application with</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push backend-heroku master</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1519,7 +1535,7 @@ If it fails to build, make sure you try understanding the output. Typical issue:
 </li>
 <li>
 <p>Save your work to the GitHub repository, too: <code>git push origin master</code><br>
-Final layout of the files (only two directory levels are shown):<br></p>
+Final layout of the files (only two directory levels are shown and hidden items are suppressed):<br></p>
 </li>
 </ol>
 </div>
@@ -1560,7 +1576,7 @@ Final layout of the files (only two directory levels are shown):<br></p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-13 14:39:53 UTC
+Last updated 2019-09-26 01:40:00 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">
