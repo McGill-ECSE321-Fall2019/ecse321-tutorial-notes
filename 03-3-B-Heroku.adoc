@@ -66,7 +66,7 @@ include ':EventRegistration-Backend'
 +
 [source,bash]
 ----
-gradle wrapper --gradle-version 5.1.1
+gradle wrapper --gradle-version 5.6.2
 ----
 
 . Create a _.gitignore_ file for the _.gradle_ folder: +
@@ -96,10 +96,12 @@ Changes to be committed:
   (use "git reset HEAD <file>..." to unstage)
 
 	new file:   .gitignore
+	new file:   build.gradle
 	new file:   gradle/wrapper/gradle-wrapper.jar
 	new file:   gradle/wrapper/gradle-wrapper.properties
 	new file:   gradlew
 	new file:   gradlew.bat
+	new file:   settings.gradle
 ----
 +
 Commit changes:
@@ -132,23 +134,30 @@ heroku config:add PROCFILE=EventRegistration-Backend/Procfile --app eventregistr
 +
 [source,bash]
 ----
-heroku git:remote --app eventregistration-backend-<UNIQUE_ID>
+heroku git:remote --app eventregistration-backend-<UNIQUE_ID> --remote backend-heroku
 ----
 +
 Output:
 +
 [source,bash]
 ----
-set git remote heroku to https://git.heroku.com/eventregistration-backend-<UNIQUE_ID>.git
+set git remote backend-heroku to https://git.heroku.com/eventregistration-backend-<UNIQUE_ID>.git
 ----
 
-. Add the `backend-heroku` remote and deploy the first version of the application with 
+. Verify that the `backend-heroku` remote is successfully added besides `origin` with `git remote -v`. Output:
 +
 [source,bash]
 ----
-git remote add backend-heroku https://git.heroku.com/eventregistration-backend-<UNIQUE_ID>.git
-git push backend-heroku master
+backend-heroku	https://git.heroku.com/eventregistration-backend-123.git (fetch)
+backend-heroku	https://git.heroku.com/eventregistration-backend-123.git (push)
+origin	git@github.com:imbur/eventregistration.git (fetch)
+origin	git@github.com:imbur/eventregistration.git (push)
 ----
+
+. Deploy your application with
++
+[source,bash]
+git push backend-heroku master
 +
 [NOTE]
 If it fails to build, make sure you try understanding the output. Typical issue: buildpacks are not added/are not in the right order.
@@ -156,7 +165,7 @@ If it fails to build, make sure you try understanding the output. Typical issue:
 . Visit the link provided in the build output. It may take some time (even 30-60 seconds) for the server to answer the first HTTP request, so be patient!
 
 . Save your work to the GitHub repository, too: `git push origin master` +
-Final layout of the files (only two directory levels are shown): +
+Final layout of the files (only two directory levels are shown and hidden items are suppressed): +
 [source,none]
 ----
 ~/git/eventregistration

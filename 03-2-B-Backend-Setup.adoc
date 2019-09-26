@@ -25,6 +25,8 @@ spring init \
 [NOTE]
 Backslashes in this snippet indicate linebreaks in this one liner command typed in the terminal. You can select and copy-paste this snippet as-is.
 
+. Navigate to the _EventRegistration-Backend_ folder
+
 . For future use, locate the _application.properties_ file in the _src/_ folder and add the following content: 
 +
 ```
@@ -52,14 +54,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @SpringBootApplication
 public class EventRegistrationApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(EventRegistrationApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(EventRegistrationApplication.class, args);
+  }
 
   @RequestMapping("/")
   public String greeting(){
     return "Hello world!";
-  }	
+  }
+  	
 }
 ----
 
