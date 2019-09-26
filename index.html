@@ -478,6 +478,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_deploying_the_app">1.7.6. Deploying the app</a></li>
 </ul>
 </li>
+<li><a href="#_domain_modeling_and_code_generation">1.8. Domain modeling and code generation</a>
+<ul class="sectlevel3">
+<li><a href="#_installing_uml_lab">1.8.1. Installing UML Lab</a></li>
+<li><a href="#_uml_lab_project_setup">1.8.2. UML Lab project setup</a></li>
+<li><a href="#_domain_modeling_exercise_the_event_registration_system">1.8.3. Domain modeling exercise: the Event Registration System</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1194,7 +1201,7 @@ Backslashes in this snippet indicate linebreaks in this one liner command typed 
 <pre class="highlightjs highlight"><code>server.port=${PORT:8080}
 
 spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults = false
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect</code></pre>
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1205,6 +1212,18 @@ spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect</code></pr
 </td>
 <td class="content">
 Source: <a href="https://vkuzel.com/spring-boot-jpa-hibernate-atomikos-postgresql-exception" class="bare">https://vkuzel.com/spring-boot-jpa-hibernate-atomikos-postgresql-exception</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+It may be the case that the <code>PostgreSQLDialect</code> needs to be changed for certain database instances (e.g., to <code>PostgreSQL9Dialect</code>).
 </td>
 </tr>
 </table>
@@ -1569,6 +1588,150 @@ Final layout of the files (only two directory levels are shown and hidden items 
 └── settings.gradle</pre>
 </div>
 </div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_domain_modeling_and_code_generation">1.8. Domain modeling and code generation</h3>
+<div class="sect3">
+<h4 id="_installing_uml_lab">1.8.1. Installing UML Lab</h4>
+<div class="paragraph">
+<p>Go to <a href="https://www.uml-lab.com/en/download/">the download page of UML Lab</a> and install it on your machine. To activate it, use the licence key shared in the MyCourses announcement.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+By the time of the fourth tutorial, we may not have the license key ready. You should be able to work with a 30-day trial version in this case and activate your license later.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_uml_lab_project_setup">1.8.2. UML Lab project setup</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Once you start UML Lab, there are some useful tutorials that help you learn about the features of the modeling tool. Furthermore, there is an introduction on how to use and configure UML Lab <a href="https://www.clear.rice.edu/comp310/Eclipse/UMLLab/">among the resources of Rice University</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new UML Lab Java project with the name <code>ca.mcgill.ecse321.eventregistration.model</code> with the default project settings.</p>
+</li>
+<li>
+<p>Within the project, create a linked folder (Select Project &#8594; New Folder &#8594; Click Advanced Button &#8594; select "Link to alternate location (linked folder)" option) that points to the <em>src/main/java</em> folder of your <code>Eventregistration-Backend</code> project. Name the folder as <em>src-gen</em>. It will be used as the target for generating model code.<br>
+<span class="image"><img src="./figs/link-folder.png" alt="Linking folder" width="600"></span></p>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Links to folders will not be versioned, so each team member needs to set this link individually after cloning the project.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Open the <em>ca.mcgill.ecse321.eventregistration.model.umlcd</em> diagram file by double clicking it. It is an empty diagram by default.</p>
+</li>
+<li>
+<p>Click on the empty diagram editor canvas and open the <em>properties view</em> and configure code generation path.<br>
+<span class="image"><img src="./figs/umllab-output.png" alt="Codegen output folder" width="600"></span></p>
+</li>
+<li>
+<p>In the same <em>Properties view</em>, apply the <em>Direct &gt; JPA1</em> code style.<br>
+<span class="image"><img src="./figs/code-style.png" alt="Code style" width="600"></span></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_domain_modeling_exercise_the_event_registration_system">1.8.3. Domain modeling exercise: the Event Registration System</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Using the <em>Palette</em> on the left hand side of the class diagram editor, create the following package structure and the <code>Person</code> class, and connect them with the <em>Containment</em> line. Once you save the diagram, the code should be generated to the <em>src-gen</em> folder (left part of the figure below).<br>
+<span class="image"><img src="./figs/initial-classdiag.png" alt="Class Diagram Packages" width="600"></span></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If you disabled the automatic code generation on file save action, then you need to do <em>right click the diagram &#8594; generate code</em> manually.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Study the generated <code>Person</code> class in the <code>ca/mcgill/ecse321/eventregistration/model</code> package (folder)!</p>
+</li>
+<li>
+<p>In the upcoming steps, we will use the <code>java.sql.Time</code> and <code>java.sql.Date</code> data types from the Java Runtime Library, so we need to add them to the model as datatypes.<br>
+<span class="image"><img src="./figs/umllab-datatype.png" alt="Adding data types" width="600"></span></p>
+</li>
+<li>
+<p>Extend the diagram by adding more classes and association and composition relations as shown below. Pay extra attention to the navigability and multiplicity of the references.<br>
+<span class="image"><img src="./figs/classdiag-complete.png" alt="Class Diagram With Classes" width="600"></span></p>
+</li>
+<li>
+<p>Select attributes to be primary keys (<code>Person</code>: id is <code>name</code>, <code>Event</code>: id is <code>name</code>, <code>Registration</code>: id is <code>id</code>)<br>
+<span class="image"><img src="./figs/umllab-primarykey.png" alt="Selecting primary keys" width="600"></span></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Verify the generated code:remove any <code>@OneToOne</code> annotations from getters associated with <code>Date</code> and <code>Time</code> from the <code>Event</code> class.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Create an extra <code>int</code> attribute for the <code>RegistrationManager</code> as well and set it as the ID (similarly to the other three classes).<br></p>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+If you forget to supply an ID to <strong>any of your entities</strong>, Hibernate will throw an exception and you application will fail to start.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Share the modeling project to git. You can use the command line git client or EGit.<br>
+<span class="image"><img src="./figs/umllab-share-project.png" alt="umllab share project" width="600"></span></p>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="paragraph">
+<p>Unresolved directive in ECSE-321-Tutorials.adoc - include::./04-2-B-Spring-Tools-Suite.adoc[]</p>
+</div>
 </div>
 </div>
 </div>
@@ -1576,7 +1739,7 @@ Final layout of the files (only two directory levels are shown and hidden items 
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-26 01:40:00 UTC
+Last updated 2019-09-26 02:10:32 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">

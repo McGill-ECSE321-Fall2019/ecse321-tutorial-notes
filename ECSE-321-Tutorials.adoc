@@ -43,3 +43,9 @@ include::{chapterdir}/03-2-B-Backend-Setup.adoc[]
 <<<
 include::{chapterdir}/03-3-B-Heroku.adoc[]
 
+<<<
+include::{chapterdir}/04-1-B-UML-Lab.adoc[]
+
+<<<
+include::{chapterdir}/04-2-B-Spring-Tools-Suite.adoc[]
+

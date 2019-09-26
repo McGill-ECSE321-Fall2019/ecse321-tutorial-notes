@@ -33,11 +33,14 @@ Backslashes in this snippet indicate linebreaks in this one liner command typed 
 server.port=${PORT:8080}
 
 spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults = false
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 ```
 +
 [NOTE]
 Source: https://vkuzel.com/spring-boot-jpa-hibernate-atomikos-postgresql-exception
++
+[NOTE]
+It may be the case that the `PostgreSQLDialect` needs to be changed for certain database instances (e.g., to `PostgreSQL9Dialect`).
 
 . Locate the Java file containing the main application class (`EventRegistrationApplication.java`) and add the following content
 +
@@ -62,7 +65,7 @@ public class EventRegistrationApplication {
   public String greeting(){
     return "Hello world!";
   }
-  	
+
 }
 ----
 
