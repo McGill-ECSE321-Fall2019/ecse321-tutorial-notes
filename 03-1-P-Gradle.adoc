@@ -10,6 +10,7 @@ First, open a terminal, and ensure you have the newes version  of Gradle (ver. 5
 Follow the steps below and add the snippets listed here to `build.gradle`, one after the other:
 
 . Create the following folder structure and a new _build.gradle_ (empty) file within the _Computation_ folder:
++
 [source,none]
 ----
 Computation
@@ -30,7 +31,6 @@ Computation
                 ├── ComputationTestAddSubstract.java
                 └── ComputationTestDivideMultiply.java
 ----
-
 . Add the `java` and the `application` plugins to the build configuration script _build.gradle_. 
 +
 [source,gradle]
