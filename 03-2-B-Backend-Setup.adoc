@@ -7,7 +7,7 @@ image:figs/eventregistration-repo.png[Create new eventregistration repo,width=60
 
 . Clone it somewhere on your disk. We assume you cloned it to _~/git/eventregistration_.
 
-. Navigate to that folder in the terminal: `cd ~/git/eventregistration_`.
+. Navigate to that folder in the terminal: `cd ~/git/eventregistration`.
 
 . Create a project for the backend application using Spring Boot CLI in this repository.
 +
