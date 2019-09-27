@@ -1012,21 +1012,22 @@ script:
 <div class="sect3">
 <h4 id="_example_gradle_application">1.6.1. Example Gradle application</h4>
 <div class="paragraph">
-<p>This section focuses on writing a Gradle (<a href="https://gradle.org/" class="bare">https://gradle.org/</a>) build script that builds a single Gradle project referred to as <em>Computation</em>. The source code and tests for a Java application is available here: <a href="https://mcgill-my.sharepoint.com/:u:/g/personal/marton_bur_mail_mcgill_ca/ETicI0zWLA1KrXk4Zw2tvjgBBlRY1Y6OED-aCVmDYsfviw?e=b5ewOD">Computation.zip</a> (src and tst folders). It is your job to create a folder called <em>Computation</em>, move sources and tests into that folder, and produce the Gradle build script <em>build.gradle</em> within this folder to automate the software build process for this project.</p>
-</div>
-<div class="paragraph">
-<p>First, open a terminal, and ensure you have the newes version  of Gradle (ver. 5.0+) installed with <code>gradle --version</code>.</p>
-</div>
-<div class="paragraph">
-<p>Follow the steps below and add the snippets listed here to <code>build.gradle</code>, one after the other:</p>
+<p>This section focuses on writing a Gradle (<a href="https://gradle.org/" class="bare">https://gradle.org/</a>) build script that builds a single Gradle project referred to as <em>computation</em>. The project with the below gradle structure is available for you to download and import in your IDE.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create the following folder structure and a new <em>build.gradle</em> (empty) file within the <em>Computation</em> folder:</p>
+<p>Go to this <a href="https://mcgill-my.sharepoint.com/:u:/g/personal/rijul_saini_mail_mcgill_ca/ERTyFtLW8VVEjTmv9VXipGwBlv0rj7TRMAfHKKH5ZicJdg?e=hej1a8">link</a> and download the <em>computation.zip</em>. Once it is downloaded, extract the project from zip.</p>
+</li>
+<li>
+<p>Open your IDE and import the extracted project(from step 1) as <em>Existing Gradle Project</em>.
+<span class="image"><img src="./figs/gradle-import.png" alt="Gradle Import"></span></p>
+</li>
+<li>
+<p>After improting the project, check that your imorted project has the required structure as shown below:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs" data-lang="none">Computation
+<pre class="highlightjs highlight"><code class="language-none hljs" data-lang="none">computation
 ├── build.gradle
 └── src
     ├── main
@@ -1047,7 +1048,10 @@ script:
 </div>
 </li>
 <li>
-<p>Add the <code>java</code> and the <code>application</code> plugins to the build configuration script <em>build.gradle</em>.</p>
+<p>Open the <em>build.gradle</em> file and check for the relevant parts as discussed in the steps (5 to 9) below.</p>
+</li>
+<li>
+<p><code>java</code> and the <code>application</code> plugins are added in the build configuration script <em>build.gradle</em>.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">apply plugin: 'java'
@@ -1057,7 +1061,7 @@ apply plugin: 'application'</code></pre>
 </div>
 </li>
 <li>
-<p>Add JUnit libraries to the <code>dependencies</code> section.</p>
+<p>JUnit libraries are added in the <code>dependencies</code> section.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">repositories {
@@ -1070,7 +1074,7 @@ dependencies {
 </div>
 </li>
 <li>
-<p>Add and describe a new task <code>compile(type: JavaCompile)</code> to specify all source files (both application and test) and set the <em>build/bin</em> as destination dir to put all compiled class files in.</p>
+<p>A task <code>compile(type: JavaCompile)</code> has been added to specify all source files (both application and test) and set the <em>build/bin</em> as destination dir to put all compiled class files in.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">task compile(type: JavaCompile) {
@@ -1111,7 +1115,7 @@ sourceSets {
 </div>
 </li>
 <li>
-<p>Specify the main class and run the application.</p>
+<p>The main class has been specified as shown below. Now, you can proceed and run the application.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">mainClassName='application.CompApp'</code></pre>
@@ -1122,7 +1126,7 @@ sourceSets {
 </div>
 </li>
 <li>
-<p>Describe the <code>jar</code> Gradle task (defined by the <code>java</code> plugin) to produce an executable jar file into <code>distributable/</code>.</p>
+<p>The <code>jar</code> Gradle task (defined by the <code>java</code> plugin) has been added to produce an executable jar file into <code>distributable/</code>.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">jar {
@@ -1329,7 +1333,13 @@ All actions described here for configuring Heroku applications using the Heroku 
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Once you are logged in with the Heroku-CLI, create a new Heroku application: in the root of the git repository of your repository (assumed to be <em>~/git/eventregistration</em>), issue <code>heroku create eventregistration-backend-&lt;UNIQUE_ID&gt; -n</code> to create an application named "eventregistration-backend-&lt;UNIQUE_ID&gt;".<br></p>
+<p>Once you are logged in with the Heroku-CLI, create a new Heroku application: in the root of the git repository of your repository (assumed to be <em>~/git/eventregistration</em>), issue the below command to create an application named "eventregistration-backend-&lt;UNIQUE_ID&gt;".</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><code>heroku create eventregistration-backend-&lt;UNIQUE_ID&gt; -n</code> <br></p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1342,7 +1352,8 @@ In Heroku, the application name should be unique Heroku-wise, that is, each appl
 </tr>
 </table>
 </div>
-</li>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>Add the <a href="https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-multi-procfile">multi procfile</a> and <a href="https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-gradle">Gradle</a> buildpacks to the app.</p>
 <div class="listingblock">
@@ -2017,7 +2028,7 @@ $&gt;</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-27 03:16:42 UTC
+Last updated 2019-09-27 16:03:58 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">
