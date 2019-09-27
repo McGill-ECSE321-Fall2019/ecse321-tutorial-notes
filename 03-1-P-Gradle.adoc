@@ -2,18 +2,20 @@
 
 ==== Example Gradle application
 
-This section focuses on writing a Gradle (https://gradle.org/) build script that builds a single Gradle project referred to as _Computation_. The source code and tests for a Java application is available here: link:https://mcgill-my.sharepoint.com/:u:/g/personal/marton_bur_mail_mcgill_ca/ETicI0zWLA1KrXk4Zw2tvjgBBlRY1Y6OED-aCVmDYsfviw?e=b5ewOD[Computation.zip] (src and tst folders). It is your job to create a folder called _Computation_, move sources and tests into that folder, and produce the Gradle build script _build.gradle_ within this folder to automate the software build process for this project. 
+This section focuses on writing a Gradle (https://gradle.org/) build script that builds a single Gradle project referred to as _computation_. The project with the below gradle structure is available for you to download and import in your IDE.
+
+. Go to this link:https://mcgill-my.sharepoint.com/:u:/g/personal/rijul_saini_mail_mcgill_ca/ERTyFtLW8VVEjTmv9VXipGwBlv0rj7TRMAfHKKH5ZicJdg?e=hej1a8[link] and download the _computation.zip_. Once it is downloaded, extract the project from zip. 
+
+. Open your IDE and import the extracted project(from step 1) as _Existing Gradle Project_.
+image:figs/gradle-import.png[Gradle Import]
 
 
-First, open a terminal, and ensure you have the newes version  of Gradle (ver. 5.0+) installed with `gradle --version`.
+. After improting the project, check that your imorted project has the required structure as shown below:
 
-Follow the steps below and add the snippets listed here to `build.gradle`, one after the other:
-
-. Create the following folder structure and a new _build.gradle_ (empty) file within the _Computation_ folder:
 +
 [source,none]
 ----
-Computation
+computation
 ├── build.gradle
 └── src
     ├── main
@@ -31,7 +33,10 @@ Computation
                 ├── ComputationTestAddSubstract.java
                 └── ComputationTestDivideMultiply.java
 ----
-. Add the `java` and the `application` plugins to the build configuration script _build.gradle_. 
+
+. Open the _build.gradle_ file and check for the relevant parts as discussed in the steps (5 to 9) below.
+
+. `java` and the `application` plugins are added in the build configuration script _build.gradle_. 
 +
 [source,gradle]
 ----
@@ -39,7 +44,7 @@ apply plugin: 'java'
 // This plugin has a predefined 'run' task that we can reuse to use Gradle to execute our application
 apply plugin: 'application'
 ----
-. Add JUnit libraries to the `dependencies` section.
+. JUnit libraries are added in the `dependencies` section.
 +
 [source,gradle]
 ----
@@ -50,7 +55,7 @@ dependencies {
     testImplementation "junit:junit:4.12"
 }
 ----
-. Add and describe a new task `compile(type: JavaCompile)` to specify all source files (both application and test) and set the _build/bin_ as destination dir to put all compiled class files in.
+. A task `compile(type: JavaCompile)` has been added to specify all source files (both application and test) and set the _build/bin_ as destination dir to put all compiled class files in.
 +
 [source,gradle]
 ----
@@ -81,7 +86,7 @@ sourceSets {
 }
 ----
 
-. Specify the main class and run the application.
+. The main class has been specified as shown below. Now, you can proceed and run the application.
 +
 [source,gradle]
 ----
@@ -90,7 +95,7 @@ mainClassName='application.CompApp'
 +
 In the command line issue `gradle run`
 
-. Describe the `jar` Gradle task (defined by the `java` plugin) to produce an executable jar file into `distributable/`.
+. The `jar` Gradle task (defined by the `java` plugin) has been added to produce an executable jar file into `distributable/`.
 +
 [source,gradle]
 ----

@@ -18,7 +18,9 @@ We are creating a Heroku application and deploying the _Hello world!_ Spring exa
 [NOTE]
 All actions described here for configuring Heroku applications using the Heroku CLI could also be done via the web UI.
 
-. Once you are logged in with the Heroku-CLI, create a new Heroku application: in the root of the git repository of your repository (assumed to be _~/git/eventregistration_), issue `heroku create eventregistration-backend-<UNIQUE_ID> -n` to create an application named "eventregistration-backend-<UNIQUE_ID>". +
+. Once you are logged in with the Heroku-CLI, create a new Heroku application: in the root of the git repository of your repository (assumed to be _~/git/eventregistration_), issue the below command to create an application named "eventregistration-backend-<UNIQUE_ID>".
+
+`heroku create eventregistration-backend-<UNIQUE_ID> -n`  +
 [NOTE]
 In Heroku, the application name should be unique Heroku-wise, that is, each application in Heroku's system should have a unique name. If you don't provide a name parameter for the command, Heroku will randomly generate one.
 
