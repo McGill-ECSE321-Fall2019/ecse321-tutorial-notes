@@ -1788,7 +1788,7 @@ Reason: Failed to determine a suitable driver class
 <span class="image"><img src="./figs/jdbc-url.png" alt="Adding env var to run config" width="600"></span></p>
 </li>
 <li>
-<p>Add the <code>spring.jpa.hibernate.ddl-auto=create</code> to <code>application.properties</code>. The database content along with the tables this way will be deleted (as necessary) then re-created each time your application starts.<br></p>
+<p>Add the <code>spring.jpa.hibernate.ddl-auto=update</code> to <code>application.properties</code>. The database content along with the tables this way will be deleted (as necessary) then re-created each time your application starts.<br></p>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -1796,7 +1796,7 @@ Reason: Failed to determine a suitable driver class
 <div class="title">Important</div>
 </td>
 <td class="content">
-In production, the value of this property should be <code>none</code> (instead of <code>create</code>). Possible values are <code>none</code>, <code>create</code>, <code>validate</code>, and <code>update</code>.
+In production, the value of this property should be <code>none</code> (instead of <code>update</code>). Possible values are <code>none</code>, <code>create</code>, <code>validate</code>, and <code>update</code>.
 </td>
 </tr>
 </table>
@@ -2028,7 +2028,7 @@ $&gt;</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-27 16:03:58 UTC
+Last updated 2019-10-04 17:02:09 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">

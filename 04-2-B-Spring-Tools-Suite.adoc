@@ -31,9 +31,9 @@ Reason: Failed to determine a suitable driver class
 . In Eclipse, open the _EventRegistration-Backend - EventregistrationApplication_ run configuration page and add an environment variable called `SPRING_DATASOURCE_URL` with the value obtained in the previous step. +
 image:figs/jdbc-url.png[Adding env var to run config,width=600]
 
-. Add the `spring.jpa.hibernate.ddl-auto=create` to `application.properties`. The database content along with the tables this way will be deleted (as necessary) then re-created each time your application starts. +
+. Add the `spring.jpa.hibernate.ddl-auto=update` to `application.properties`. The database content along with the tables this way will be deleted (as necessary) then re-created each time your application starts. +
 [IMPORTANT]
-In production, the value of this property should be `none` (instead of `create`). Possible values are `none`, `create`, `validate`, and `update`.
+In production, the value of this property should be `none` (instead of `update`). Possible values are `none`, `create`, `validate`, and `update`.
 
 . If needed: troubleshooting:
  * If you get an error message saying something similar to `createClob() is not yet implemented`, then you can try setting the `spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true` variable in your `application.properties`. It could be a workaround a workaround for an issue with Postgres. +
