@@ -492,6 +492,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_debugging_connecting_to_the_database_using_a_client">1.9.3. Debugging: connecting to the database using a client</a></li>
 </ul>
 </li>
+<li><a href="#_crud_repositories_and_services">1.10. CRUD Repositories and Services</a>
+<ul class="sectlevel3">
+<li><a href="#_creating_a_crud_repository">1.10.1. Creating a CRUD Repository</a></li>
+<li><a href="#_implementing_services">1.10.2. Implementing Services</a></li>
+</ul>
+</li>
+<li><a href="#_unit_testing_the_backend_service">1.11. Unit Testing the Backend Service</a></li>
 </ul>
 </li>
 </ul>
@@ -2021,6 +2028,541 @@ $&gt;</code></pre>
 </li>
 </ol>
 </div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_crud_repositories_and_services">1.10. CRUD Repositories and Services</h3>
+<div class="paragraph">
+<p>Previously, in the <code>ca.mcgill.ecse321.eventregistration.dao.EventRegistrationRepository</code> class we used an instance of <code>javax.persistence.EntityManager</code> from Hibernate to directly to implement the required operations related to saving/retrieving data to/from a database (Create, Read, Update, and Delete operations, shortly, CRUD).
+This section will introduce the Spring framework&#8217;s inbuilt support for such CRUD operations via the <code>org.springframework.data.repository.CrudRepository</code> interface and will show how to use such repositories to implement your use cases in so-called <em>service</em> classes.</p>
+</div>
+<div class="paragraph">
+<p>If you would like to, you can obtain a version of the project that already has the changes from the previous tutorials <a href="https://github.com/McGill-ECSE321-Winter2019/eventregistration">here</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_crud_repository">1.10.1. Creating a CRUD Repository</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new interface <code>PersonRepository</code> in the <code>ca.mcgill.ecse321.eventregistration.dao</code> package and extend the <code>CrudRepository&lt;Person, String&gt;</code> interface</p>
+</li>
+<li>
+<p>Create a new method <code>Person findByName(String name)</code></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.dao;
+
+import org.springframework.data.repository.CrudRepository;
+
+import ca.mcgill.ecse321.eventregistration.model.Person;
+
+public interface PersonRepository extends CrudRepository&lt;Person, String&gt;{
+
+	Person findPersonByName(String name);
+
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Since Spring supports automated JPA Query creation from method names (see <a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation">possible language constructs here</a>) <strong>we don&#8217;t need to implement the interface manually</strong>, Spring JPA will create the corresponding queries runtime! This way we don&#8217;t need to write SQL queries either.</p>
+</li>
+<li>
+<p>Create interfaces for the <code>Event</code> and <code>Registration</code> classes as well<br>
+<em>EventRepository.java</em>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.dao;
+
+import org.springframework.data.repository.CrudRepository;
+
+import ca.mcgill.ecse321.eventregistration.model.Event;
+
+public interface EventRepository extends CrudRepository&lt;Event, String&gt; {
+
+	Event findEventByName(String name);
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>RegistrationRepository.java</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.dao;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
+import ca.mcgill.ecse321.eventregistration.model.Event;
+import ca.mcgill.ecse321.eventregistration.model.Person;
+import ca.mcgill.ecse321.eventregistration.model.Registration;
+
+public interface RegistrationRepository extends CrudRepository&lt;Registration, Integer&gt; {
+
+	List&lt;Registration&gt; findByPerson(Person personName);
+
+	boolean existsByPersonAndEvent(Person person, Event eventName);
+
+	Registration findByPersonAndEvent(Person person, Event eventName);
+
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_implementing_services">1.10.2. Implementing Services</h4>
+<div class="paragraph">
+<p>We implement use-cases in <em>service classes</em> by using the CRUD repository objects for each data type of the domain model.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In <em>src/main/java</em>, create a new package <code>ca.mcgill.ecse321.eventregistration.service</code>.</p>
+</li>
+<li>
+<p>In this package, create the <code>EventRegistrationService</code> class as shown below</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.service;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ca.mcgill.ecse321.eventregistration.dao.EventRepository;
+import ca.mcgill.ecse321.eventregistration.dao.PersonRepository;
+import ca.mcgill.ecse321.eventregistration.dao.RegistrationRepository;
+import ca.mcgill.ecse321.eventregistration.model.Event;
+import ca.mcgill.ecse321.eventregistration.model.Person;
+import ca.mcgill.ecse321.eventregistration.model.Registration;
+
+@Service
+public class EventRegistrationService {
+
+	@Autowired
+	EventRepository eventRepository;
+	@Autowired
+	PersonRepository personRepository;
+	@Autowired
+	RegistrationRepository registrationRepository;
+
+	@Transactional
+	public Person createPerson(String name) {
+		Person person = new Person();
+		person.setName(name);
+		personRepository.save(person);
+		return person;
+	}
+
+	@Transactional
+	public Person getPerson(String name) {
+		Person person = personRepository.findPersonByName(name);
+		return person;
+	}
+
+	@Transactional
+	public List&lt;Person&gt; getAllPersons() {
+		return toList(personRepository.findAll());
+	}
+
+	@Transactional
+	public Event createEvent(String name, Date date, Time startTime, Time endTime) {
+		Event event = new Event();
+		event.setName(name);
+		event.setDate(date);
+		event.setStartTime(startTime);
+		event.setEndTime(endTime);
+		eventRepository.save(event);
+		return event;
+	}
+
+	@Transactional
+	public Event getEvent(String name) {
+		Event event = eventRepository.findEventByName(name);
+		return event;
+	}
+
+	@Transactional
+	public List&lt;Event&gt; getAllEvents() {
+		return toList(eventRepository.findAll());
+	}
+
+	@Transactional
+	public Registration register(Person person, Event event) {
+		Registration registration = new Registration();
+		registration.setId(person.getName().hashCode() * event.getName().hashCode());
+		registration.setPerson(person);
+		registration.setEvent(event);
+
+		registrationRepository.save(registration);
+
+		return registration;
+	}
+
+	@Transactional
+	public List&lt;Registration&gt; getAllRegistrations(){
+		return toList(registrationRepository.findAll());
+	}
+
+	@Transactional
+	public List&lt;Event&gt; getEventsAttendedByPerson(Person person) {
+		List&lt;Event&gt; eventsAttendedByPerson = new ArrayList&lt;&gt;();
+		for (Registration r : registrationRepository.findByPerson(person)) {
+			eventsAttendedByPerson.add(r.getEvent());
+		}
+		return eventsAttendedByPerson;
+	}
+
+	private &lt;T&gt; List&lt;T&gt; toList(Iterable&lt;T&gt; iterable){
+		List&lt;T&gt; resultList = new ArrayList&lt;T&gt;();
+		for (T t : iterable) {
+			resultList.add(t);
+		}
+		return resultList;
+	}
+
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unit_testing_the_backend_service">1.11. Unit Testing the Backend Service</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In a fresh Spring Boot project, there is already a single test class <code>EventRegistrationApplicationTests</code> in the <em>src/test/java</em> folder that looks like the following:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EventRegistrationApplicationTests {
+
+    @Test
+    public void contextLoads() {
+
+    }
+
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run this test that checks if the application can successfully load by <em>right clicking on the class &#8594; Run as&#8230;&#8203; &#8594; JUnit test</em><br></p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+You need to set the <code>SPRING_DATASOURCE_URL</code> for the test run configuration as well if you use an environment variable to set datasource URL. See step 5 in section 3.3.1.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Add a new test class <code>ca.mcgill.ecse321.eventregistration.service.TestEventRegistrationService</code> and implement tests for the service</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import ca.mcgill.ecse321.eventregistration.dao.EventRepository;
+import ca.mcgill.ecse321.eventregistration.dao.PersonRepository;
+import ca.mcgill.ecse321.eventregistration.dao.RegistrationRepository;
+import ca.mcgill.ecse321.eventregistration.model.Event;
+import ca.mcgill.ecse321.eventregistration.model.Person;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class TestEventRegistrationService {
+
+	@Autowired
+	private EventRegistrationService service;
+
+	@Autowired
+	private PersonRepository personRepository;
+	@Autowired
+	private EventRepository eventRepository;
+	@Autowired
+	private RegistrationRepository registrationRepository;
+
+	@After
+	public void clearDatabase() {
+		// Fisrt, we clear registrations to avoid exceptions due to inconsistencies
+		registrationRepository.deleteAll();
+		// Then we can clear the other tables
+		personRepository.deleteAll();
+		eventRepository.deleteAll();
+	}
+
+	@Test
+	public void testCreatePerson() {
+		assertEquals(0, service.getAllPersons().size());
+
+		String name = "Oscar";
+
+		try {
+			service.createPerson(name);
+		} catch (IllegalArgumentException e) {
+			// Check that no error occurred
+			fail();
+		}
+
+		List&lt;Person&gt; allPersons = service.getAllPersons();
+
+		assertEquals(1, allPersons.size());
+		assertEquals(name, allPersons.get(0).getName());
+	}
+
+	@Test
+	public void testCreatePersonNull() {
+		assertEquals(0, service.getAllPersons().size());
+
+		String name = null;
+		String error = null;
+
+		try {
+			service.createPerson(name);
+		} catch (IllegalArgumentException e) {
+			error = e.getMessage();
+		}
+
+		// check error
+		assertEquals("Person name cannot be empty!", error);
+
+		// check no change in memory
+		assertEquals(0, service.getAllPersons().size());
+
+	}
+
+    // ... other tests
+
+    @Test
+	public void testRegisterPersonAndEventDoNotExist() {
+		assertEquals(0, service.getAllRegistrations().size());
+
+		String nameP = "Oscar";
+		Person person = new Person();
+		person.setName(nameP);
+		assertEquals(0, service.getAllPersons().size());
+
+		String nameE = "Soccer Game";
+		Calendar c = Calendar.getInstance();
+		c.set(2016, Calendar.OCTOBER, 16, 9, 00, 0);
+		Date eventDate = new Date(c.getTimeInMillis());
+		Time startTime = new Time(c.getTimeInMillis());
+		c.set(2016, Calendar.OCTOBER, 16, 10, 30, 0);
+		Time endTime = new Time(c.getTimeInMillis());
+		Event event = new Event();
+		event.setName(nameE);
+		event.setDate(eventDate);
+		event.setStartTime(startTime);
+		event.setEndTime(endTime);
+		assertEquals(0, service.getAllEvents().size());
+
+		String error = null;
+		try {
+			service.register(person, event);
+		} catch (IllegalArgumentException e) {
+			error = e.getMessage();
+		}
+
+		// check error
+		assertEquals("Person does not exist! Event does not exist!", error);
+
+		// check model in memory
+		assertEquals(0, service.getAllRegistrations().size());
+		assertEquals(0, service.getAllPersons().size());
+		assertEquals(0, service.getAllEvents().size());
+
+	}
+
+
+    // ... other tests
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>See the <a href="https://gist.githubusercontent.com/imbur/d8836dc9f44ece65186a43ac80a259fd/raw/b60ddaf6c86860abe119908b139ca087f1f5ff6e/TestEventRegistrationService.java">complete test suite here</a>.</p>
+</li>
+<li>
+<p>Run the tests and interpret the test error messages! You should see only a few (at least one) tests passing.</p>
+</li>
+<li>
+<p>Update the implementation (i.e., replace the current service method codes with the ones provided below) of the following methods with input validation in the <code>EventRegistrationService</code> service class to make the tests pass (Test-Driven Development)</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Transactional
+public Person createPerson(String name) {
+	if (name == null || name.trim().length() == 0) {
+		throw new IllegalArgumentException("Person name cannot be empty!");
+	}
+	Person person = new Person();
+	person.setName(name);
+	personRepository.save(person);
+	return person;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java\ hljs" data-lang="java\">@Transactional
+public Person getPerson(String name) {
+    if (name == null || name.trim().length() == 0) {
+        throw new IllegalArgumentException("Person name cannot be empty!");
+    }
+    Person person = personRepository.findPersonByName(name);
+    return person;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Transactional
+public Event getEvent(String name) {
+    if (name == null || name.trim().length() == 0) {
+        throw new IllegalArgumentException("Event name cannot be empty!");
+    }
+    Event event = eventRepository.findEventByName(name);
+    return event;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Transactional
+public Event createEvent(String name, Date date, Time startTime, Time endTime) {
+    // Input validation
+    String error = "";
+    if (name == null || name.trim().length() == 0) {
+        error = error + "Event name cannot be empty! ";
+    }
+    if (date == null) {
+        error = error + "Event date cannot be empty! ";
+    }
+    if (startTime == null) {
+        error = error + "Event start time cannot be empty! ";
+    }
+    if (endTime == null) {
+        error = error + "Event end time cannot be empty! ";
+    }
+    if (endTime != null &amp;&amp; startTime != null &amp;&amp; endTime.before(startTime)) {
+        error = error + "Event end time cannot be before event start time!";
+    }
+    error = error.trim();
+    if (error.length() &gt; 0) {
+        throw new IllegalArgumentException(error);
+    }
+
+    Event event = new Event();
+    event.setName(name);
+    event.setDate(date);
+    event.setStartTime(startTime);
+    event.setEndTime(endTime);
+    eventRepository.save(event);
+    return event;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Transactional
+public Registration register(Person person, Event event) {
+    String error = "";
+    if (person == null) {
+        error = error + "Person needs to be selected for registration! ";
+    } else if (!personRepository.existsById(person.getName())) {
+        error = error + "Person does not exist! ";
+    }
+    if (event == null) {
+        error = error + "Event needs to be selected for registration!";
+    } else if (!eventRepository.existsById(event.getName())) {
+        error = error + "Event does not exist!";
+    }
+    if (registrationRepository.existsByPersonAndEvent(person, event)) {
+        error = error + "Person is already registered to this event!";
+    }
+    error = error.trim();
+
+    if (error.length() &gt; 0) {
+        throw new IllegalArgumentException(error);
+    }
+
+    Registration registration = new Registration();
+	registration.setId(person.getName().hashCode() * event.getName().hashCode());
+    registration.setPerson(person);
+    registration.setEvent(event);
+
+    registrationRepository.save(registration);
+
+    return registration;
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Transactional
+public List&lt;Event&gt; getEventsAttendedByPerson(Person person) {
+    if (person == null ) {
+        throw new IllegalArgumentException("Person cannot be null!");
+    }
+    List&lt;Event&gt; eventsAttendedByPerson = new ArrayList&lt;&gt;();
+    for (Registration r : registrationRepository.findByPerson(person)) {
+        eventsAttendedByPerson.add(r.getEvent());
+    }
+    return eventsAttendedByPerson;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run the tests again, and all should be passing this time.</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -2028,7 +2570,7 @@ $&gt;</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-04 17:02:09 UTC
+Last updated 2019-10-04 18:14:12 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">

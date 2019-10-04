@@ -49,3 +49,8 @@ include::{chapterdir}/04-1-B-UML-Lab.adoc[]
 <<<
 include::{chapterdir}/04-2-B-Spring-Tools-Suite.adoc[]
 
+<<<
+include::{chapterdir}/05-1-B-Spring-CRUD-and-Service.adoc[]
+
+<<<
+include::{chapterdir}/05-2-B-Spring-Testing.adoc[]
