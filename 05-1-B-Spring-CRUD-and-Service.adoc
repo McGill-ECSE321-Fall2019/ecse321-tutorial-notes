@@ -1,0 +1,188 @@
+=== CRUD Repositories and Services
+
+Previously, in the `ca.mcgill.ecse321.eventregistration.dao.EventRegistrationRepository` class we used an instance of `javax.persistence.EntityManager` from Hibernate to directly to implement the required operations related to saving/retrieving data to/from a database (Create, Read, Update, and Delete operations, shortly, CRUD). 
+This section will introduce the Spring framework's inbuilt support for such CRUD operations via the `org.springframework.data.repository.CrudRepository` interface and will show how to use such repositories to implement your use cases in so-called _service_ classes.
+
+If you would like to, you can obtain a version of the project that already has the changes from the previous tutorials link:https://github.com/McGill-ECSE321-Winter2019/eventregistration[here].
+
+==== Creating a CRUD Repository
+
+. Create a new interface `PersonRepository` in the `ca.mcgill.ecse321.eventregistration.dao` package and extend the `CrudRepository<Person, String>` interface
+
+. Create a new method `Person findByName(String name)` 
++
+[source,java]
+----
+package ca.mcgill.ecse321.eventregistration.dao;
+
+import org.springframework.data.repository.CrudRepository;
+
+import ca.mcgill.ecse321.eventregistration.model.Person;
+
+public interface PersonRepository extends CrudRepository<Person, String>{
+	
+	Person findPersonByName(String name);
+	
+}
+----
+
+. Since Spring supports automated JPA Query creation from method names (see link:https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation[possible language constructs here]) **we don't need to implement the interface manually**, Spring JPA will create the corresponding queries runtime! This way we don't need to write SQL queries either.
+
+. Create interfaces for the `Event` and `Registration` classes as well +
+_EventRepository.java_:
++
+[source,java]
+----
+package ca.mcgill.ecse321.eventregistration.dao;
+
+import org.springframework.data.repository.CrudRepository;
+
+import ca.mcgill.ecse321.eventregistration.model.Event;
+
+public interface EventRepository extends CrudRepository<Event, String> {
+	
+	Event findEventByName(String name);
+
+}
+----
++
+_RegistrationRepository.java_:
++
+[source,java]
+----
+package ca.mcgill.ecse321.eventregistration.dao;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
+import ca.mcgill.ecse321.eventregistration.model.Event;
+import ca.mcgill.ecse321.eventregistration.model.Person;
+import ca.mcgill.ecse321.eventregistration.model.Registration;
+
+public interface RegistrationRepository extends CrudRepository<Registration, Integer> {
+
+	List<Registration> findByPerson(Person personName);
+
+	boolean existsByPersonAndEvent(Person person, Event eventName);
+
+	Registration findByPersonAndEvent(Person person, Event eventName);
+
+}
+----
+
+==== Implementing Services
+
+We implement use-cases in _service classes_ by using the CRUD repository objects for each data type of the domain model.
+
+. In _src/main/java_, create a new package `ca.mcgill.ecse321.eventregistration.service`.
+
+. In this package, create the `EventRegistrationService` class as shown below
++
+[source,java]
+----
+package ca.mcgill.ecse321.eventregistration.service;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ca.mcgill.ecse321.eventregistration.dao.EventRepository;
+import ca.mcgill.ecse321.eventregistration.dao.PersonRepository;
+import ca.mcgill.ecse321.eventregistration.dao.RegistrationRepository;
+import ca.mcgill.ecse321.eventregistration.model.Event;
+import ca.mcgill.ecse321.eventregistration.model.Person;
+import ca.mcgill.ecse321.eventregistration.model.Registration;
+
+@Service
+public class EventRegistrationService {
+
+	@Autowired
+	EventRepository eventRepository;
+	@Autowired
+	PersonRepository personRepository;
+	@Autowired
+	RegistrationRepository registrationRepository;
+
+	@Transactional
+	public Person createPerson(String name) {
+		Person person = new Person();
+		person.setName(name);
+		personRepository.save(person);
+		return person;
+	}
+
+	@Transactional
+	public Person getPerson(String name) {
+		Person person = personRepository.findPersonByName(name);
+		return person;
+	}
+	
+	@Transactional
+	public List<Person> getAllPersons() {
+		return toList(personRepository.findAll());
+	}
+
+	@Transactional
+	public Event createEvent(String name, Date date, Time startTime, Time endTime) {
+		Event event = new Event();
+		event.setName(name);
+		event.setDate(date);
+		event.setStartTime(startTime);
+		event.setEndTime(endTime);
+		eventRepository.save(event);
+		return event;
+	}
+
+	@Transactional
+	public Event getEvent(String name) {
+		Event event = eventRepository.findEventByName(name);
+		return event;
+	}
+
+	@Transactional
+	public List<Event> getAllEvents() {
+		return toList(eventRepository.findAll());
+	}
+
+	@Transactional
+	public Registration register(Person person, Event event) {
+		Registration registration = new Registration();
+		registration.setId(person.getName().hashCode() * event.getName().hashCode());
+		registration.setPerson(person);
+		registration.setEvent(event);
+
+		registrationRepository.save(registration);
+
+		return registration;
+	}
+
+	@Transactional
+	public List<Registration> getAllRegistrations(){
+		return toList(registrationRepository.findAll());
+	}
+
+	@Transactional
+	public List<Event> getEventsAttendedByPerson(Person person) {
+		List<Event> eventsAttendedByPerson = new ArrayList<>();
+		for (Registration r : registrationRepository.findByPerson(person)) {
+			eventsAttendedByPerson.add(r.getEvent());
+		}
+		return eventsAttendedByPerson;
+	}
+	
+	private <T> List<T> toList(Iterable<T> iterable){
+		List<T> resultList = new ArrayList<T>();
+		for (T t : iterable) {
+			resultList.add(t);
+		}
+		return resultList;
+	}
+	
+}
+----
