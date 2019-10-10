@@ -1,4 +1,4 @@
-=== Unit Testing the Backend Service
+=== Unit Testing Persistence in the Backend Service
 
 . In a fresh Spring Boot project, there is already a single test class `EventRegistrationApplicationTests` in the _src/test/java_ folder that looks like the following:
 +
