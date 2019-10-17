@@ -54,3 +54,13 @@ include::{chapterdir}/05-1-B-Spring-CRUD-and-Service.adoc[]
 
 <<<
 include::{chapterdir}/05-2-B-Spring-Testing.adoc[]
+
+<<<
+include::{chapterdir}/06-1-B-Spring-Data.adoc[]
+
+<<<
+include::{chapterdir}/07-1-B-Testing.adoc[]
+
+<<<
+include::{chapterdir}/07-2-B-Testing-Coverage.adoc[]
+

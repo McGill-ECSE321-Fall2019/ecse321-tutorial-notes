@@ -1,0 +1,143 @@
+
+=== Testing Backend Services
+
+We implement a first unit test for testing the application service logic.
+
+[[preparations]]
+==== Preparations
+
+. Open the project and ensure that you add _JUnit 5_ and _Mockito 2+_ to the project dependencies in `build.gradle`:
++
+[source,gradle]
+----
+dependencies {
+  // Add these lines to the dependency configuration, don't replace the existing dependencies
+  	testImplementation "junit:junit:4.12"
+  	testRuntime('org.junit.jupiter:junit-jupiter-engine:5.3.1')
+    testImplementation('org.mockito:mockito-core:2.+')
+  	testImplementation('org.mockito:mockito-junit-jupiter:2.18.3')
+}
+----
++
+[NOTE]
+Finding configuration settings for your Gradle/Maven project is very simple by searaching for them on MVNRepository: https://mvnrepository.com/
+
+. If you also would like to run your project from Eclipse, add an additional dependency: 
++
+```
+testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: "1.3.1"
+```
+
+. Create a test class (in case you don't already have one) `EventregistrationServiceTests` in the corresponding package under `src/test/java`:
++
+[source,java]
+----
+package ca.mcgill.ecse321.eventregistration;
+
+@RunWith(MockitoJUnitRunner.class)
+public class EventregistrationServiceTests {
+
+}
+----
+
+. Build your project to ensure its dependencies are correctly loaded.
+
+==== Writing tests
+
+. Add the following imports to the test class:
++
+[source,java]
+----
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+import ca.mcgill.ecse321.eventregistration.dao.EventRepository;
+import ca.mcgill.ecse321.eventregistration.dao.PersonRepository;
+import ca.mcgill.ecse321.eventregistration.dao.RegistrationRepository;
+import ca.mcgill.ecse321.eventregistration.service.EventRegistrationService;
+import org.mockito.invocation.InvocationOnMock;
+import org.springframework.test.context.junit4.SpringRunner;
+import ca.mcgill.ecse321.eventregistration.controller.EventRegistrationRestController;
+import ca.mcgill.ecse321.eventregistration.model.Person;
+----
+
+. Add the following static imports for methods: 
++
+[source,java]
+----
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+----
+
+. Create the DAO mock for person 
++
+[source,java]
+----
+@Mock
+private PersonRepository personDao;
+
+@InjectMocks
+private EventRegistrationService service;
+
+private static final String PERSON_KEY = "TestPerson";
+private static final String NONEXISTING_KEY = "NotAPerson";
+
+@Before
+public void setMockOutput() {
+	when(personDao.findPersonByName(anyString())).thenAnswer( (InvocationOnMock invocation) -> {
+		if(invocation.getArgument(0).equals(PERSON_KEY)) {
+			Person person = new Person();
+			person.setName(PERSON_KEY);
+			return person;
+		} else {
+			return null;
+		}
+	});
+}
+----
+
+. Add test cases 
++
+[source,java]
+----
+@Test
+public void testCreatePerson() {
+	assertEquals(0, service.getAllPersons().size());
+
+	String name = "Oscar";
+
+	try {
+		person = service.createPerson(name);
+	} catch (IllegalArgumentException e) {
+		// Check that no error occurred
+		fail();
+	}
+
+	assertEquals(name, person.getName());
+}
+
+@Test
+public void testCreatePersonNull() {
+	String name = null;
+	String error = null;
+
+	try {
+		person = service.createPerson(name);
+	} catch (IllegalArgumentException e) {
+		error = e.getMessage();
+	}
+
+	// check error
+	assertEquals("Person name cannot be empty!", error);
+}
+----
+
+. Run the tests with `gradle test` from the command line in the root of the project, or in Eclipse, right click on the test class name then select _Run As... > JUnit test_. +
+image:figs/junit-test-eclipse-output.png[Eclipse JUnit output]

@@ -499,6 +499,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_unit_testing_persistence_in_the_backend_service">1.11. Unit Testing Persistence in the Backend Service</a></li>
+<li><a href="#_creating_restful_web_services_in_spring">1.12. Creating RESTful Web Services in Spring</a>
+<ul class="sectlevel3">
+<li><a href="#_preliminaries_2">1.12.1. Preliminaries</a></li>
+<li><a href="#_building_a_restful_web_service">1.12.2. Building a RESTful Web Service</a></li>
+<li><a href="#_test_the_service">1.12.3. Test the Service</a></li>
+<li><a href="#_spring_data_an_alternative_to_exposing_the_database">1.12.4. Spring Data - an Alternative to Exposing the Database</a></li>
+</ul>
+</li>
+<li><a href="#_testing_backend_services">1.13. Testing Backend Services</a>
+<ul class="sectlevel3">
+<li><a href="#preparations">1.13.1. Preparations</a></li>
+<li><a href="#_writing_tests">1.13.2. Writing tests</a></li>
+</ul>
+</li>
+<li><a href="#_code_coverage_using_eclemma">1.14. Code Coverage using EclEmma</a>
+<ul class="sectlevel3">
+<li><a href="#_preliminary">1.14.1. Preliminary</a></li>
+<li><a href="#_creating_a_gradle_project">1.14.2. Creating a Gradle Project</a></li>
+<li><a href="#_retrieving_test_coverage_metrics">1.14.3. Retrieving Test Coverage Metrics</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -2564,13 +2585,699 @@ public List&lt;Event&gt; getEventsAttendedByPerson(Person person) {
 </li>
 </ol>
 </div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_creating_restful_web_services_in_spring">1.12. Creating RESTful Web Services in Spring</h3>
+<div class="paragraph">
+<p>Previously, we used CRUD repository objects for each data type of the domain model and implemented use-cases in service classes. In this section, we will Implement REST API for eventregistration (people, events and registrations) and expose Sping Data.</p>
+</div>
+<div class="paragraph">
+<p>If you would like to, you can obtain a version of the project that already has the changes from the previous tutorials <a href="https://github.com/McGill-ECSE321-Winter2019/eventregistration">here</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="_preliminaries_2">1.12.1. Preliminaries</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Set database URL to start application and accessing the database remotey. You can do the same by either adding an environment variable called <code>SPRING_DATASOURCE_URL</code> or by specifying <code>spring.datasource.url</code>, <code>spring.datasource.username</code>, and <code>spring.datasource.password</code> in <em>src/main/resources/application.properties</em>.</p>
+</li>
+<li>
+<p>Add the dependency 'spring-boot-starter-data-rest' in <em>build.gradle</em> file of your backend. It is required to expose Spring Data repositories over REST using Spring Data REST.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+implementation 'org.springframework.boot:spring-boot-starter-web'
+
+runtimeOnly 'org.postgresql:postgresql'
+testImplementation 'org.springframework.boot:spring-boot-starter-test'</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_building_a_restful_web_service">1.12.2. Building a RESTful Web Service</h4>
+<div class="paragraph">
+<p>We will discuss two ways to build RESTful web service for our Spring Boot project.</p>
+</div>
+<div class="sect4">
+<h5 id="_building_a_restful_web_service_using_controller_and_dtos">Building a RESTful Web Service Using Controller and DTOs</h5>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>We will first create a new package in EventRegistration-Backend and then create EventRegistrationRestController class inside it. We have added the annotation <code>@RestController</code>
+above the controller class so that HTTP requests are handled by EventRegistrationRestController. In addition, we enabled the Cross-Origin Resource Sharing at the controller level using '@CrossOrigin' notation.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.controller;
+
+@CrossOrigin(origins = "*")
+@RestController
+public class EventRegistrationRestController {
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>We further create another package ca.mcgill.ecse321.eventregistration.dto and create the below files inside that package. First we create EventDto.java.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.dto;
+
+import java.sql.Date;
+import java.sql.Time;
+
+public class EventDto {
+
+	private String name;
+	private Date eventDate;
+	private Time startTime;
+	private Time endTime;
+
+	public EventDto() {
+	}
+
+	public EventDto(String name) {
+		this(name, Date.valueOf("1971-01-01"), Time.valueOf("00:00:00"), Time.valueOf("23:59:59"));
+	}
+
+	public EventDto(String name, Date eventDate, Time startTime, Time endTime) {
+		this.name = name;
+		this.eventDate = eventDate;
+		this.startTime = startTime;
+		this.endTime = endTime;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Date getEventDate() {
+		return eventDate;
+	}
+
+	public Time getStartTime() {
+		return startTime;
+	}
+
+	public Time getEndTime() {
+		return endTime;
+	}
+
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Next, we create <code>PersonDto</code> Java class.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.dto;
+
+import java.util.Collections;
+import java.util.List;
+
+public class PersonDto {
+
+	private String name;
+	private List&lt;EventDto&gt; events;
+
+	public PersonDto() {
+	}
+
+	@SuppressWarnings("unchecked")
+	public PersonDto(String name) {
+		this(name, Collections.EMPTY_LIST);
+	}
+
+	public PersonDto(String name, List&lt;EventDto&gt; arrayList) {
+		this.name = name;
+		this.events = arrayList;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List&lt;EventDto&gt; getEvents() {
+		return events;
+	}
+
+	public void setEvents(List&lt;EventDto&gt; events) {
+		this.events = events;
+	}
+
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Finally, we create <code>RegistrationDto</code> Java class.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration.dto;
+
+public class RegistrationDto {
+
+	private PersonDto person;
+	private EventDto event;
+
+	public RegistrationDto() {
+	}
+
+	public RegistrationDto(PersonDto person, EventDto event) {
+		this.person = person;
+		this.event = event;
+	}
+
+	public PersonDto getperson() {
+		return person;
+	}
+
+	public void setperson(PersonDto person) {
+		this.person = person;
+	}
+
+	public EventDto getEvent() {
+		return event;
+	}
+
+	public void setEvent(EventDto event) {
+		this.event = event;
+	}
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Now, we will add the methods in the controller class. Also, we will add annotaions to map web requests.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">	@PostMapping(value = { "/persons/{name}", "/persons/{name}/" })
+	public PersonDto createPerson(@PathVariable("name") String name) throws IllegalArgumentException {
+		// @formatter:on
+		Person person = service.createPerson(name);
+		return convertToDto(person);
+	}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>@RequestMapping annotation is used to map web requests to Spring Controller methods. Since, @RequestMapping maps all HTTP operations by default. We can use @GetMapping, @PostMapping and so forth to narrow this mapping.</p>
+</div>
+<div class="paragraph">
+<p>Moreover, in the above snippet, we use "value" and @PathVariable to bind the value of the query string parameter name into the name parameter of the createPerson() method.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>You can add other methods similarly with appropriate mappings.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@PostMapping(value = { "/events/{name}", "/events/{name}/" })
+public EventDto createEvent(@PathVariable("name") String name, @RequestParam Date date,
+@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern = "HH:mm") LocalTime startTime,
+@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern = "HH:mm") LocalTime endTime)
+throws IllegalArgumentException {
+	Event event = service.createEvent(name, date, Time.valueOf(startTime), Time.valueOf(endTime));
+	return convertToDto(event);
+}
+
+@GetMapping(value = { "/events", "/events/" })
+public List&lt;EventDto&gt; getAllEvents() {
+	List&lt;EventDto&gt; eventDtos = new ArrayList&lt;&gt;();
+	for (Event event : service.getAllEvents()) {
+		eventDtos.add(convertToDto(event));
+	}
+	return eventDtos;
+}
+
+@PostMapping(value = { "/register", "/register/" })
+public RegistrationDto registerPersonForEvent(@RequestParam(name = "person") PersonDto pDto,
+	@RequestParam(name = "event") EventDto eDto) throws IllegalArgumentException {
+	Person p = service.getPerson(pDto.getName());
+	Event e = service.getEvent(eDto.getName());
+
+	Registration r = service.register(p, e);
+	return convertToDto(r, p, e);
+}
+
+@GetMapping(value = { "/registrations/person/{name}", "/registrations/person/{name}/" })
+public List&lt;EventDto&gt; getEventsOfPerson(@PathVariable("name") PersonDto pDto) {
+	Person p = convertToDomainObject(pDto);
+	return createEventDtosForPerson(p);
+}
+
+@GetMapping(value = { "/events/{name}", "/events/{name}/" })
+public EventDto getEventByName(@PathVariable("name") String name) throws IllegalArgumentException {
+	return convertToDto(service.getEvent(name));
+}
+
+private EventDto convertToDto(Event e) {
+	if (e == null) {
+		throw new IllegalArgumentException("There is no such Event!");
+	}
+	EventDto eventDto = new EventDto(e.getName(),e.getDate(),e.getStartTime(),e.getEndTime());
+	return eventDto;
+}
+
+private PersonDto convertToDto(Person p) {
+	if (p == null) {
+		throw new IllegalArgumentException("There is no such Person!");
+	}
+	PersonDto personDto = new PersonDto(p.getName());
+	personDto.setEvents(createEventDtosForPerson(p));
+	return personDto;
+}
+
+private RegistrationDto convertToDto(Registration r, Person p, Event e) {
+	EventDto eDto = convertToDto(e);
+	PersonDto pDto = convertToDto(p);
+	return new RegistrationDto(pDto, eDto);
+}
+
+private Person convertToDomainObject(PersonDto pDto) {
+	List&lt;Person&gt; allPersons = service.getAllPersons();
+	for (Person person : allPersons) {
+		if (person.getName().equals(pDto.getName())) {
+			return person;
+		}
+	}
+	return null;
+}
+
+private List&lt;EventDto&gt; createEventDtosForPerson(Person p) {
+	List&lt;Event&gt; eventsForPerson = service.getEventsAttendedByPerson(p);
+	List&lt;EventDto&gt; events = new ArrayList&lt;&gt;();
+	for (Event event : eventsForPerson) {
+		events.add(convertToDto(event));
+	}
+	return events;
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_the_service">1.12.3. Test the Service</h4>
+<div class="paragraph">
+<p>We can test the application using, e.g., the RESTClient browser plugin, Advanced Rest Client, Postman or curl.</p>
+</div>
+<div class="paragraph">
+<p>Once you launch the client, you can specify the path and select the method as shown in the below figures.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./figs/RestClient1.png" alt="Post method on REST Client" width="1000"></span></p>
+</div>
+<div class="paragraph">
+<p>Once we use POST, the record is persisted and then we can use the GET method to retrive the same.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./figs/RestClient2.png" alt="GET method on REST Client" width="1000"></span></p>
+</div>
+<div class="paragraph">
+<p>Similary, we can test the other methods.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_spring_data_an_alternative_to_exposing_the_database">1.12.4. Spring Data - an Alternative to Exposing the Database</h4>
+<div class="paragraph">
+<p>The advantage of using Spring Data Rest is that it can remove a lot of boilerplate that’s natural to REST services. Spring would automatically create endpoints like /events, /people as we saw above and these endpoints can be further customized.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>We have already added the dependency 'spring-boot-starter-data-rest' in preliminary section to to expose Spring Data repositories over REST using Spring Data REST.</p>
+</li>
+<li>
+<p>Next, we can go to repository interfaces and add @RepositoryRestResource annotaion.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RepositoryRestResource(collectionResourceRel = "participants", path = "participants")
+public interface PersonRepository extends CrudRepository&lt;Person, String&gt;{
+
+	Person findPersonByName(String name);
+
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Finally, we can access this REST API in the browser or REST Client and will receive the JSON as shown below.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./figs/RestClient3.png" alt="Post method on REST Client" width="1000"></span></p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_testing_backend_services">1.13. Testing Backend Services</h3>
+<div class="paragraph">
+<p>We implement a first unit test for testing the application service logic.</p>
+</div>
+<div class="sect3">
+<h4 id="preparations">1.13.1. Preparations</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open the project and ensure that you add <em>JUnit 5</em> and <em>Mockito 2+</em> to the project dependencies in <code>build.gradle</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">dependencies {
+  // Add these lines to the dependency configuration, don't replace the existing dependencies
+  	testImplementation "junit:junit:4.12"
+  	testRuntime('org.junit.jupiter:junit-jupiter-engine:5.3.1')
+    testImplementation('org.mockito:mockito-core:2.+')
+  	testImplementation('org.mockito:mockito-junit-jupiter:2.18.3')
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Finding configuration settings for your Gradle/Maven project is very simple by searaching for them on MVNRepository: <a href="https://mvnrepository.com/" class="bare">https://mvnrepository.com/</a>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>If you also would like to run your project from Eclipse, add an additional dependency:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: "1.3.1"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a test class (in case you don&#8217;t already have one) <code>EventregistrationServiceTests</code> in the corresponding package under <code>src/test/java</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.eventregistration;
+
+@RunWith(MockitoJUnitRunner.class)
+public class EventregistrationServiceTests {
+
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build your project to ensure its dependencies are correctly loaded.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_writing_tests">1.13.2. Writing tests</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the following imports to the test class:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+import ca.mcgill.ecse321.eventregistration.dao.EventRepository;
+import ca.mcgill.ecse321.eventregistration.dao.PersonRepository;
+import ca.mcgill.ecse321.eventregistration.dao.RegistrationRepository;
+import ca.mcgill.ecse321.eventregistration.service.EventRegistrationService;
+import org.mockito.invocation.InvocationOnMock;
+import org.springframework.test.context.junit4.SpringRunner;
+import ca.mcgill.ecse321.eventregistration.controller.EventRegistrationRestController;
+import ca.mcgill.ecse321.eventregistration.model.Person;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add the following static imports for methods:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create the DAO mock for person</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mock
+private PersonRepository personDao;
+
+@InjectMocks
+private EventRegistrationService service;
+
+private static final String PERSON_KEY = "TestPerson";
+private static final String NONEXISTING_KEY = "NotAPerson";
+
+@Before
+public void setMockOutput() {
+	when(personDao.findPersonByName(anyString())).thenAnswer( (InvocationOnMock invocation) -&gt; {
+		if(invocation.getArgument(0).equals(PERSON_KEY)) {
+			Person person = new Person();
+			person.setName(PERSON_KEY);
+			return person;
+		} else {
+			return null;
+		}
+	});
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add test cases</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Test
+public void testCreatePerson() {
+	assertEquals(0, service.getAllPersons().size());
+
+	String name = "Oscar";
+
+	try {
+		person = service.createPerson(name);
+	} catch (IllegalArgumentException e) {
+		// Check that no error occurred
+		fail();
+	}
+
+	assertEquals(name, person.getName());
+}
+
+@Test
+public void testCreatePersonNull() {
+	String name = null;
+	String error = null;
+
+	try {
+		person = service.createPerson(name);
+	} catch (IllegalArgumentException e) {
+		error = e.getMessage();
+	}
+
+	// check error
+	assertEquals("Person name cannot be empty!", error);
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run the tests with <code>gradle test</code> from the command line in the root of the project, or in Eclipse, right click on the test class name then select <em>Run As&#8230;&#8203; &gt; JUnit test</em>.<br>
+<span class="image"><img src="./figs/junit-test-eclipse-output.png" alt="Eclipse JUnit output"></span></p>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_code_coverage_using_eclemma">1.14. Code Coverage using EclEmma</h3>
+<div class="paragraph">
+<p>This tutorial covers the basics of EclEmma and retrieves code coverage metrics using it.</p>
+</div>
+<div class="sect3">
+<h4 id="_preliminary">1.14.1. Preliminary</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install EclEmma as a plugin in your Eclipse IDE from <a href="https://www.eclemma.org/installation.html">here</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_gradle_project">1.14.2. Creating a Gradle Project</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+We will create a Gradle project from scratch and be testing a simple method <em>returnAverage(int[], int, int, int)</em> .
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new Gradle project in Eclipse by clicking on <em>File</em> &gt; <em>New</em> &gt; <em>Other</em><br>
+<span class="image"><img src="./figs/pit-testing-fig-1.png" alt="New Project"></span></p>
+</li>
+<li>
+<p>Under <em>Gradle</em>, choose Gradle Project<br>
+<span class="image"><img src="./figs/pit-testing-fig-2.png" alt="New Gradle Project"></span></p>
+</li>
+<li>
+<p>Click on <em>Next</em>, then name your project <em>tutorial7</em>, click on <em>Finish</em><br>
+<span class="image"><img src="./figs/pit-testing-fig-3.png" alt="Project Name"></span><br></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The project may take some time to be created.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Create a new package instead of the default ones for both the source and test folders (e.g <code>ca.mcgill.ecse321.tutorial7</code>) and move the default generated classes (<code>Library</code> and <code>LibraryTest</code>) to this package.<br>
+<span class="image"><img src="./figs/pit-testing-fig-4.png" alt="Create Packages"></span></p>
+</li>
+<li>
+<p>Change the code in the <code>Library</code> class</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.tutorial7;
+
+public class Library {
+
+	public static double returnAverage(int value[], int arraySize, int MIN, int MAX) {
+		int index, ti, tv, sum;
+		double average;
+		index = 0;
+		ti = 0;
+		tv = 0;
+		sum = 0;
+		while (ti &lt; arraySize &amp;&amp; value[index] != -999) {
+			ti++;
+			if (value[index] &gt;= MIN &amp;&amp; value[index] &lt;= MAX) {
+				tv++;
+				sum += value[index];
+			}
+			index++;
+		}
+		if (tv &gt; 0)
+			average = (double) sum / tv;
+		else
+			average = (double) -999;
+		return average;
+	}
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Change the code in the <code>LibraryTest</code> class</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package ca.mcgill.ecse321.tutorial7;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+public class LibraryTest {
+
+	@Test
+	public void allBranchCoverageMinimumTestCaseForReturnAverageTest1() {
+		int[] value = {5, 25, 15, -999};
+		int AS = 4;
+		int min = 10;
+		int max = 20;
+		double average = Library.returnAverage(value, AS, min, max);
+		assertEquals(15, average, 0.1);
+	}
+
+	@Test
+	public void allBranchCoverageMinimumTestCaseForReturnAverageTest2() {
+		int[] value = {};
+		int AS = 0;
+		int min = 10;
+		int max = 20;
+		double average = Library.returnAverage(value, AS, min, max);
+		assertEquals(-999.0, average, 0.1);
+	}
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_retrieving_test_coverage_metrics">1.14.3. Retrieving Test Coverage Metrics</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+We can straightforwardly manage code coverage using JaCoCo inside Eclipse with no configuration if we are using EclEmma Eclipse plugin.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Run the Test in coverage mode using Eclemma. Click on <em>LibraryTest</em>, <em>Coverage As</em>, <em>1 JUnit Test</em><br>
+<span class="image"><img src="./figs/pit-testing-fig-5.png" alt="Full Branch Coverage"></span></p>
+</li>
+<li>
+<p>Verify that we have 100% branch coverage.<br>
+<span class="image"><img src="./figs/pit-testing-fig-6.png" alt="Full Branch Coverage-Eclemma"></span></p>
+</li>
+</ol>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-10 15:21:30 UTC
+Last updated 2019-10-17 17:06:47 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">
