@@ -1,0 +1,102 @@
+=== Code Coverage using EclEmma
+
+This tutorial covers the basics of EclEmma and retrieves code coverage metrics using it.
+
+==== Preliminary
+
+. Install EclEmma as a plugin in your Eclipse IDE from link:https://www.eclemma.org/installation.html[here].
+
+==== Creating a Gradle Project
+[NOTE]
+We will create a Gradle project from scratch and be testing a simple method _returnAverage(int[], int, int, int)_ . 
+
+. Create a new Gradle project in Eclipse by clicking on _File_ > _New_ > _Other_ +
+image:figs/pit-testing-fig-1.png[New Project]
+
+. Under _Gradle_, choose Gradle Project +
+image:figs/pit-testing-fig-2.png[New Gradle Project]
+
+. Click on _Next_, then name your project _tutorial7_, click on _Finish_ +
+image:figs/pit-testing-fig-3.png[Project Name] +
+[NOTE]
+The project may take some time to be created.
+
+. Create a new package instead of the default ones for both the source and test folders (e.g `ca.mcgill.ecse321.tutorial7`) and move the default generated classes (`Library` and `LibraryTest`) to this package. +
+image:figs/pit-testing-fig-4.png[Create Packages]
+
+. Change the code in the `Library` class 
++
+[source,java]
+----
+package ca.mcgill.ecse321.tutorial7;
+
+public class Library {
+
+	public static double returnAverage(int value[], int arraySize, int MIN, int MAX) {
+		int index, ti, tv, sum;
+		double average;
+		index = 0;
+		ti = 0;
+		tv = 0;
+		sum = 0;
+		while (ti < arraySize && value[index] != -999) {
+			ti++;
+			if (value[index] >= MIN && value[index] <= MAX) {
+				tv++;
+				sum += value[index];
+			}
+			index++;
+		}
+		if (tv > 0)
+			average = (double) sum / tv;
+		else
+			average = (double) -999;
+		return average;
+	}
+}
+----
+
+. Change the code in the `LibraryTest` class 
++
+[source,java]
+----
+package ca.mcgill.ecse321.tutorial7;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+public class LibraryTest {
+	
+	@Test
+	public void allBranchCoverageMinimumTestCaseForReturnAverageTest1() {
+		int[] value = {5, 25, 15, -999};
+		int AS = 4;
+		int min = 10;
+		int max = 20;		
+		double average = Library.returnAverage(value, AS, min, max);
+		assertEquals(15, average, 0.1);
+	}
+	
+	@Test
+	public void allBranchCoverageMinimumTestCaseForReturnAverageTest2() {
+		int[] value = {};
+		int AS = 0;
+		int min = 10;
+		int max = 20;		
+		double average = Library.returnAverage(value, AS, min, max);
+		assertEquals(-999.0, average, 0.1);
+	}
+}
+----
+
+==== Retrieving Test Coverage Metrics
+
+[NOTE]
+We can straightforwardly manage code coverage using JaCoCo inside Eclipse with no configuration if we are using EclEmma Eclipse plugin.
+
+. Run the Test in coverage mode using Eclemma. Click on _LibraryTest_, _Coverage As_, _1 JUnit Test_ +
+image:figs/pit-testing-fig-5.png[Full Branch Coverage]
+
+. Verify that we have 100% branch coverage. +
+image:figs/pit-testing-fig-6.png[Full Branch Coverage-Eclemma]
