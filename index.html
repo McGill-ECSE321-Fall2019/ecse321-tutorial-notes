@@ -3023,6 +3023,26 @@ public class EventregistrationServiceTests {
 <div class="olist arabic">
 <ol class="arabic">
 <li>
+<p>First, update/optimize the <code>createPerson</code> service method:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Transactional
+public Person createPerson(String name) {
+  if (name == null || name == "") {
+    throw new IllegalArgumentException("Person name cannot be empty!");
+  }
+  Person person = personRepository.findPersonByName(name);
+  if ( person == null ) {
+    person = new Person();
+    person.setName(name);
+    personRepositroy.save(person);
+  }
+  return person;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
 <p>Add the following imports to the test class:</p>
 <div class="listingblock">
 <div class="content">
@@ -3654,7 +3674,7 @@ Your new Vue.js component should be rendered (with the static HTML content).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-24 00:50:21 UTC
+Last updated 2019-10-24 18:19:40 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">

@@ -44,6 +44,25 @@ public class EventregistrationServiceTests {
 
 ==== Writing tests
 
+. First, update/optimize the `createPerson` service method:
++
+[source,java]
+----
+@Transactional
+public Person createPerson(String name) {
+  if (name == null || name == "") {
+    throw new IllegalArgumentException("Person name cannot be empty!");
+  }
+  Person person = personRepository.findPersonByName(name);
+  if ( person == null ) {
+    person = new Person();
+    person.setName(name);
+    personRepositroy.save(person);
+  }
+  return person;
+}
+----
+
 . Add the following imports to the test class:
 +
 [source,java]
