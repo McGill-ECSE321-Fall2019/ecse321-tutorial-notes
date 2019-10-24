@@ -520,6 +520,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_retrieving_test_coverage_metrics">1.14.3. Retrieving Test Coverage Metrics</a></li>
 </ul>
 </li>
+<li><a href="#_installation_instructions_vue_js">1.15. Installation Instructions: Vue.js</a>
+<ul class="sectlevel3">
+<li><a href="#_install_vue_js">1.15.1. Install Vue.js</a></li>
+<li><a href="#_generate_initial_vue_js_project_content">1.15.2. Generate initial Vue.js project content</a></li>
+<li><a href="#_install_additional_dependencies">1.15.3. Install additional dependencies</a></li>
+<li><a href="#_setting_up_your_development_server">1.15.4. Setting up your development server</a></li>
+<li><a href="#_commit_your_work_to_github">1.15.5. Commit your work to Github</a></li>
+</ul>
+</li>
+<li><a href="#_create_a_static_vue_js_component">1.16. Create a Static Vue.js Component</a>
+<ul class="sectlevel3">
+<li><a href="#_create_a_component_file">1.16.1. Create a component file</a></li>
+<li><a href="#_create_a_new_routing_command">1.16.2. Create a new routing command</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -3270,6 +3285,368 @@ We can straightforwardly manage code coverage using JaCoCo inside Eclipse with n
 </li>
 </ol>
 </div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_installation_instructions_vue_js">1.15. Installation Instructions: Vue.js</h3>
+<div class="paragraph">
+<p><a href="https://vuejs.org/v2/guide/">Vue.js</a> is a popular web frontend for building
+user interfacs in Javascript, which is considered to be easier to learn compared to <a href="https://reactjs.org/">React</a> and
+<a href="https://angular.io/">Angular</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="_install_vue_js">1.15.1. Install Vue.js</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open a shell (or run <strong>cmd.exe</strong> in Windows)</p>
+</li>
+<li>
+<p>Check that you successfully installed <strong>node.js</strong> and <strong>npm</strong> e.g. by checking their versions:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ node -v
+v8.10.0
+$ npm -v
+3.5.2</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Install the command line interface (CLI) for Vue: <code>sudo npm install --global vue-cli</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_generate_initial_vue_js_project_content">1.15.2. Generate initial Vue.js project content</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Navigate to your local Git repository of the Event Registration System</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd ~/git/eventregistration</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Generate initial content as follows</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Hit <kbd>Enter</kbd> after each line if not indicated otherwise</p>
+</li>
+<li>
+<p>Detailed instructions at <a href="https://github.com/vuejs-templates/webpack" class="bare">https://github.com/vuejs-templates/webpack</a> and <a href="https://bootstrap-vue.js.org/docs" class="bare">https://bootstrap-vue.js.org/docs</a></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ vue init bootstrap-vue/webpack eventregistration-frontend
+? Project name (EventRegistration-Frontend) EventRegistration-Frontend
+? Project description (A Vue.js project) A Vue.js frontend for Event Registration App
+? Author (varrodan &lt;daniel.varro@gmail.com&gt;)
+? Vue build (Use arrow keys):
+&gt; Runtime + Compiler
+  Runtime-only
+? Install vue-router (Y/n): Y
+? Use ESLint to lint your code (Y/n): n
+? Setup unit tests with Karma + Mocha (Y/n) n
+? Setup e2e tests with Nightwatch (Y/n) Y
+
+vue-cli · Generated "EventRegistration-Frontend".</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Now execute the following commands (one after the other)</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd EventRegistration-Frontend
+$ npm install
+$ npm run dev</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>As a result A sample web page should appear at <a href="http://localhost:8080/" class="bare">http://localhost:8080/</a></p>
+</li>
+<li>
+<p>You can stop this development server by pressing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span> in the shell</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_install_additional_dependencies">1.15.3. Install additional dependencies</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install JQuery and Axios (we will use these dependencies for issuing REST API calls):</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">npm install --save axios
+npm install --save jquery</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_setting_up_your_development_server">1.15.4. Setting up your development server</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>We change the default port to <strong>8087</strong> (instead of the default 8080) and
+the default IP address by using a configuration file.
+The rationale behind this step is that other Tomcat servers may already listen at
+the default localhost:8080 port which may clash with our development server.</p>
+</li>
+<li>
+<p>Open <strong>./config/index.js</strong> and add <code>port: 8087</code> to <code>module.exports</code>
+(both <code>build</code> and <code>dev</code> part)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The development server is set up at localhost, i.e. <a href="http://127.0.0.1:8087" class="bare">http://127.0.0.1:8087</a></p>
+</li>
+<li>
+<p>The production server is set up in accordance with the virtual machines</p>
+</li>
+<li>
+<p>We also store the host IP address and port of the backend server
+in similar environment variables (<code>backendHost</code> and <code>backendPort</code>).</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-js hljs" data-lang="js">module.exports = {
+  build: {
+    env: require('./prod.env'),
+    host: 'eventregistration-frontend-123.herokuapp.com',
+    port: 443,
+    backendHost: 'eventregistration-backend-123.herokuapp.com',
+    backendPort: 443,
+    //...
+  },
+  dev: {
+    env: require('./dev.env'),
+    host: '127.0.0.1',
+    port: 8087,
+    backendHost: '127.0.0.1',
+    backendPort: 8080,
+    //...
+  }
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Open <strong>./build/dev-server.js</strong>, and change the <code>uri</code> assignment as follows:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The original line of code can be commented or deleted.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-js hljs" data-lang="js">//var uri = 'http://localhost:' + port
+var host = config.dev.host
+var uri = 'http://' + host + ':' + port</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Start again your development server by <code>npm run dev</code>.
+The same web application should now appear at <a href="http://127.0.0.1:8087/" class="bare">http://127.0.0.1:8087/</a></p>
+</li>
+<li>
+<p>Stop the development server by <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_commit_your_work_to_github">1.15.5. Commit your work to Github</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If everything works then commit your work to your Github repository.</p>
+</li>
+<li>
+<p>Notice that many libraries and files are omitted, which is intentional. Check the <code>.gitignore</code> file for details.</p>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_a_static_vue_js_component">1.16. Create a Static Vue.js Component</h3>
+<div class="paragraph">
+<p>Vue.js promotes the use of <a href="https://vuejs.org/v2/guide/components.html">components</a>
+which encapsulate GUI elements and their behavior in order to build up rich user interfaces in a modular way. A component consists of</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>template</strong>: A template of (a part of) an HTML document enriched with
+data bindings, conditional expressions, loops, etc.</p>
+</li>
+<li>
+<p><strong>script</strong>: The behavior of the user interface programmed in JavaScript.</p>
+</li>
+<li>
+<p><strong>style</strong>: The customized graphical appearance of HTML document elements.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We will first create a new Vue.js component and then connect it to a backend
+Java Spring service via a Rest API call.</p>
+</div>
+<div class="sect3">
+<h4 id="_create_a_component_file">1.16.1. Create a component file</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+We use <code>.</code> below to refer to the <code>EventRegistration-Frontend</code> directory.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new file <strong>EventRegistration.vue</strong> in <strong>./src/components</strong> with  the
+following initial content:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;template&gt;
+&lt;/template&gt;
+&lt;script&gt;
+&lt;/script&gt;
+&lt;style&gt;
+&lt;/style&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create some static HTML content of the template part starting with a <code>&lt;div&gt;</code> element
+corresponding to your component. We</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;template&gt;
+  &lt;div id="eventregistration"&gt;
+    &lt;h2&gt;People&lt;/h2&gt;
+    &lt;table&gt;
+      &lt;tr&gt;
+          &lt;td&gt;John&lt;/td&gt;
+          &lt;td&gt;Event to attend&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;
+              &lt;input type="text" placeholder="Person Name"&gt;
+          &lt;/td&gt;
+          &lt;td&gt;
+              &lt;button&gt;Create&lt;/button&gt;
+          &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;p&gt;
+      &lt;span style="color:red"&gt;Error: Message text comes here&lt;/span&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Customize the <code>&lt;style&gt;</code> part with your designated CSS content. A detailed
+CSS reference documentation is available at <a href="https://www.w3schools.com/CSSref/" class="bare">https://www.w3schools.com/CSSref/</a>.
+The final result of that part should like as follows.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-HTML hljs" data-lang="HTML">&lt;style&gt;
+  #eventregistration {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    color: #2c3e50;
+    background: #f2ece8;
+  }
+&lt;/style&gt;</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_create_a_new_routing_command">1.16.2. Create a new routing command</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>We need to route certain HTTP calls to a specific URL to be handled by
+<strong>EventRegistration.vue</strong>.</p>
+</li>
+<li>
+<p>Open  <strong>./src/router/index.js</strong> and add a new route by extending the existing
+<code>routes</code> property.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'Hello',
+      component: Hello
+    },
+    {
+      path: '/app',
+      name: 'EventRegistration',
+      component: EventRegistration
+    }
+  ]
+})</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You should not change the number of spaces used as indentation otherwise you get error messages, if you have LInt enabled in your project.</p>
+</li>
+<li>
+<p>Import the new component <code>EventRegistration.vue</code> at the beginning of <strong>./src/router/index.js</strong> after all existing imports!</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// add import after all existing imports
+import EventRegistration from '@/components/EventRegistration'</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Start the development server and navigate your browser to <a href="http://127.0.0.1:8087/#/app" class="bare">http://127.0.0.1:8087/#/app</a>.
+Your new Vue.js component should be rendered (with the static HTML content).</p>
+</li>
+</ol>
+</div>
 </div>
 </div>
 </div>
@@ -3277,7 +3654,7 @@ We can straightforwardly manage code coverage using JaCoCo inside Eclipse with n
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-17 17:06:47 UTC
+Last updated 2019-10-24 00:50:21 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./highlight.js/styles/foundation.min.css">

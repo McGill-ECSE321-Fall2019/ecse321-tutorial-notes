@@ -64,3 +64,9 @@ include::{chapterdir}/07-1-B-Testing.adoc[]
 <<<
 include::{chapterdir}/07-2-B-Testing-Coverage.adoc[]
 
+<<<
+include::{chapterdir}/08-1-W-Install-Vue.adoc[]
+
+<<<
+include::{chapterdir}/08-2-W-Vuejs-FirstComponent.adoc[]
+
