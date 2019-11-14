@@ -37,6 +37,8 @@ include::{chapterdir}/02-2-P-Travis.adoc[]
 <<<
 include::{chapterdir}/03-1-P-Gradle.adoc[]
 
+== Backend
+
 <<<
 include::{chapterdir}/03-2-B-Backend-Setup.adoc[]
 
@@ -64,6 +66,8 @@ include::{chapterdir}/07-1-B-Testing.adoc[]
 <<<
 include::{chapterdir}/07-2-B-Testing-Coverage.adoc[]
 
+== Web Frontend
+
 <<<
 include::{chapterdir}/08-1-W-Install-Vue.adoc[]
 
@@ -78,3 +82,15 @@ include::{chapterdir}/09-2-W-Calling-backend-service.adoc[]
 
 <<<
 include::{chapterdir}/09-3-W-Extra-steps-for-Events.adoc[]
+
+== Mobile Frontend
+
+<<<
+include::{chapterdir}/10-1-M-Create-Android-Project.adoc[]
+
+<<<
+include::{chapterdir}/10-2-M-Develop-Android-Part-1.adoc[]
+
+<<<
+include::{chapterdir}/10-3-M-Run-Virtual-Device.adoc[]
+
